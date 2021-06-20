@@ -10,12 +10,8 @@ EMOJI = '\U00002705'
 
 client = commands.Bot(command_prefix = config.PREFIX)
 attendance_list = {}
-current_event = ""
 
-async def process_data(message):
-    global attendance_list
-    global current_event
-    
+async def process_data(message, attendance_list):
     itens = message.content.split(' ')
 
     if message.content.startswith(config.PREFIX + 'eventos'):
@@ -29,21 +25,20 @@ async def process_data(message):
         return 
         
     content = ' '.join(itens[1:])
-    current_event = content
 
     if message.content.startswith(config.PREFIX + 'novo'):
-        attendance_list[current_event] = []
-        msg = await message.channel.send('Interaja aqui para se inscrever na lista de alunos de {current_event}')
+        attendance_list[content] = []
+        msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de alunos de _{content}_')
         await msg.add_reaction(EMOJI)
 
     elif message.content.startswith(config.PREFIX + 'chamada'):
-        if current_event not in attendance_list.keys():
+        if content not in attendance_list.keys():
             await message.channel.send("Evento não cadastrado.")
             return
 
-        if len(attendance_list[current_event]) == 0:
+        if len(attendance_list[content]) == 0:
             await message.channel.send("Não há alunos inscritos.")
-        for i, user in enumerate(attendance_list[current_event], start=1):
+        for i, user in enumerate(attendance_list[content], start=1):
             await message.channel.send(f'{i}) {user}')
             
 @client.event
@@ -52,23 +47,27 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    global attendance_list
     if message.author == client.user:
         return
 
     if message.content.startswith(config.PREFIX):
-        await process_data(message)
+        await process_data(message, attendance_list)
 
 @client.event
 async def on_reaction_add(reaction, user):
     global attendance_list
-    global current_event
 
     channel = client.get_channel(reaction.message.channel.id)
+    itens = reaction.message.content.split('_')
     reaction = str(reaction).encode('unicode-escape')
 
-    if str(user) != BOT:
-        if reaction == EMOJI.encode('unicode-escape'):
-            attendance_list[current_event].append(user.mention)
-            await channel.send(f"{user.mention} inscrito(a) em {current_event}")
+    if len(itens) > 1:
+        current_event = itens[1]
+
+        if str(user) != BOT:
+            if reaction == EMOJI.encode('unicode-escape'):
+                attendance_list[current_event].append(user.mention)
+                await channel.send(f"{user.mention} inscrito(a) em {current_event}")
             
 client.run(config.TOKEN)
