@@ -1,11 +1,11 @@
-import discord
 import asyncio 
+import discord
+from discord.ext import commands
 
 import config
-from attendance import process_data
+from attendance import process_data, insert_to_database
 
 client = commands.Bot(command_prefix = config.PREFIX)
-attendance_list = {}
             
 @client.event
 async def on_ready():
@@ -13,17 +13,14 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    global attendance_list
     if message.author == client.user:
         return
 
     if message.content.startswith(config.PREFIX):
-        await process_data(message, attendance_list)
+        await process_data(message)
 
 @client.event
 async def on_reaction_add(reaction, user):
-    global attendance_list
-
     channel = client.get_channel(reaction.message.channel.id)
     itens = reaction.message.content.split('**')
     reaction = str(reaction).encode('unicode-escape')
@@ -33,8 +30,8 @@ async def on_reaction_add(reaction, user):
 
         if config.BOT not in str(user):
             if reaction == config.EMOJI.encode('unicode-escape'):
-                # inserção no banco
-                attendance_list[current_event].append(user.mention)
+                insert_to_database(user.mention, current_event)
                 await channel.send(f"{user.mention} inscrito(a) em {current_event}")
+
             
 client.run(config.TOKEN)

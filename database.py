@@ -25,56 +25,49 @@ class Event(Base):
         return f"<Event(name={self.name!r})>"
 
 engine = create_engine('sqlite:///:memory:')
-session = scoped_session(sessionmaker(bind=engine))
+Session = sessionmaker(bind=engine)
+Session.expire_on_commit = False
 Base.metadata.create_all(engine)
 
 def insert_event(name):
     event = Event(name=name)
-    session.add(event)
+    with Session.begin() as session:
+        session.add(event)
 
 def insert_user(name, event):
-    e = session.query(Event).filter_by(name=event).first()
-    user = User(name=name, event=e)
-    session.add(user)
+    with Session.begin() as session:
+        e = session.query(Event).filter_by(name=event).first()
+        user = User(name=name, event=e)
+        session.add(user, _warn=True)
 
 def find_all_events():
-    return session.query(Event).all()
+    with Session.begin() as session:
+        events = session.query(Event).all()
+        session.expunge_all()
+        return events
 
 def find_all_users():
-    return session.query(User).all()
+    with Session.begin() as session:
+        users = session.query(User).all()
+        session.expunge_all()
+        return users
 
 def find_event(name):
-    return session.query(Event).filter_by(name=name).all()
+    with Session.begin() as session:
+        event = session.query(Event).filter_by(name=name).all()
+        session.expunge_all()
+        return event
 
 def find_user(name):
-    return session.query(User).filter_by(name=name).all()
+    with Session.begin() as session:
+        user = session.query(User).filter_by(name=name).all()
+        session.expunge_all()
+        return user
 
-def find_event_users(event):
-    event = session.query(Event).first()
-    return session.query(User).all()
-
-if __name__ == '__main__':
-    insert_event('aula de mecanica')
-    insert_event('aula de costura')
-    insert_user(name='eduard',event='aula de mecanica')
-    insert_user(name='marcos',event='aula de costura')
-    insert_user(name='lua',event='aula de mecanica')
-    insert_user(name='joja',event='aula de mecanica')
-    insert_user(name='joja',event='aula de costura')
-
-    print('TODOS OS EVENTOS')
-    for e in find_all_events():
-        print(e)
-
-    print('\n')
-    print('TODOS OS USUARIOS')
-
-    for u in find_all_users():
-        print(u)
-
-    print('\n')
-    print('TODOS OS USUARIOS DO CURSO DE COSTURA')    
-
-    for u in find_event_users('aula de costura'):
-        print(u)
+def find_event_users(event_name):
+    with Session.begin() as session:
+        event = session.query(Event).filter_by(name=event_name).first()
+        users = session.query(User).filter_by(event=event).all()
+        session.expunge_all()
+        return users
 
