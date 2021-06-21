@@ -29,15 +29,21 @@ Session = sessionmaker(bind=engine)
 Base.metadata.create_all(engine)
 
 def insert_event(name):
-    event = Event(name=name)
     with Session.begin() as session:
-        session.add(event)
+        if session.query(Event).filter_by(name=name).count() == 0:
+            event = Event(name=name)
+            session.add(event)
+        else:
+            return False
 
 def insert_user(name, event):
     with Session.begin() as session:
-        e = session.query(Event).filter_by(name=event).first()
-        user = User(name=name, event=e)
-        session.add(user, _warn=True)
+        event = session.query(Event).filter_by(name=event).first()
+        if session.query(User).filter_by(name=name, event=event).count() == 0:
+            user = User(name=name, event=event)
+            session.add(user)
+        else:
+            return False
 
 def find_all_events():
     with Session.begin() as session:

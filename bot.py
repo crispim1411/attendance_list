@@ -22,7 +22,8 @@ async def on_message(message):
 @client.event
 async def on_reaction_add(reaction, user):
     channel = client.get_channel(reaction.message.channel.id)
-    itens = reaction.message.content.split('**')
+    message = reaction.message
+    itens = message.content.split('**')
     reaction = str(reaction).encode('unicode-escape')
 
     if len(itens) > 1:
@@ -30,8 +31,6 @@ async def on_reaction_add(reaction, user):
 
         if config.BOT not in str(user):
             if reaction == config.EMOJI.encode('unicode-escape'):
-                insert_to_database(user.mention, current_event)
-                await channel.send(f"{user.mention} inscrito(a) em {current_event}")
-
+                await insert_to_database(message, user.mention, current_event)
             
 client.run(config.TOKEN)

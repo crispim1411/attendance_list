@@ -23,9 +23,12 @@ async def process_data(message):
     content = ' '.join(itens[1:])
 
     if message.content.startswith(config.PREFIX + 'novo'):
-        insert_event(content)
-        msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de alunos de **{content}**')
-        await msg.add_reaction(config.EMOJI)
+        result = insert_event(content)
+        if result == False:
+            await message.channel.send(f'Este evento já está cadastrado.')
+        else:
+            msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de alunos de **{content}**')
+            await msg.add_reaction(config.EMOJI)
 
     elif message.content.startswith(config.PREFIX + 'chamada'):
         if len(find_event(content)) == 0:
@@ -38,5 +41,9 @@ async def process_data(message):
         for i, user in enumerate(users, start=1):
             await message.channel.send(f'{i}) {user.name}')
 
-def insert_to_database(user, event):
-    insert_user(user, event)
+async def insert_to_database(message, user, event):
+    result = insert_user(user, event)
+    if result == False:
+        await message.channel.send("Você já está inscrito nessa aula.")
+    else:
+        await message.channel.send(f"{user} inscrito(a) em {event}")
