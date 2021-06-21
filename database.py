@@ -24,9 +24,8 @@ class Event(Base):
     def __repr__(self):
         return f"<Event(name={self.name!r})>"
 
-engine = create_engine('sqlite:///:memory:')
+engine = create_engine('sqlite:///info.db')
 Session = sessionmaker(bind=engine)
-Session.expire_on_commit = False
 Base.metadata.create_all(engine)
 
 def insert_event(name):
