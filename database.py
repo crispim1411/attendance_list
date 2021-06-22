@@ -89,11 +89,11 @@ def delete_event(event_name):
         else:
             return False
 
-def delete_user(user_name, event_name):
+def delete_user(user_mention, event_name):
     with Session.begin() as session:
         event = session.query(Event).filter_by(name=event_name).first()
         if event:
-            user = session.query(User).filter_by(event=event).first()
+            user = session.query(User).filter_by(mention=user_mention, event=event).first()
             if not user:
                 return False
             session.delete(user)
