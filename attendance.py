@@ -31,7 +31,7 @@ async def process_data(message):
         await message.channel.send(HELP)
         return
 
-    if len(itens) == 1 and message.content.startswith(config['PREFIX'] + 'eventos'):
+    if len(itens) == 1 and message.content.startswith(config['PREFIX'] + 'listar'):
         await message.channel.send('Eventos cadastrados: ')
         events = database.find_all_events()
         if len(events) == 0:
@@ -42,7 +42,7 @@ async def process_data(message):
 
     content = ' '.join(itens[1:])
 
-    if message.content.startswith(config['PREFIX'] + 'novo'):
+    if message.content.startswith(config['PREFIX'] + 'criar'):
         result = database.insert_event(content)
         if result == False:
             await message.channel.send(f'Este evento já está cadastrado.')
