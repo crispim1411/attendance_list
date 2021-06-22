@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 
 import config
-from attendance import process_data, insert_to_database
+from attendance import process_data, insert_to_database, remove_from_database
 
 client = commands.Bot(command_prefix = config.PREFIX)
             
@@ -30,7 +30,9 @@ async def on_reaction_add(reaction, user):
         current_event = itens[1]
 
         if config.BOT not in str(user):
-            if reaction == config.EMOJI.encode('unicode-escape'):
+            if reaction == config.CHECK.encode('unicode-escape'):
                 await insert_to_database(message, user.mention, current_event)
+            elif reaction == config.CROSS.encode('unicode-escape'):
+                await remove_from_database(message, user.mention, current_event)
             
 client.run(config.TOKEN)

@@ -10,7 +10,7 @@ class User(Base):
     id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
     name = Column(String, nullable=False)
     event_id = Column(Integer, ForeignKey('events.id'))
-    event = relationship('Event', backref=backref('users'))
+    event = relationship('Event', backref=backref('users'), cascade="all, delete")
 
     def __repr__(self):
         return f"<User(name={self.name!r}, event={self.event.name!r})>"
@@ -39,9 +39,12 @@ def insert_event(name):
 def insert_user(name, event):
     with Session.begin() as session:
         event = session.query(Event).filter_by(name=event).first()
-        if session.query(User).filter_by(name=name, event=event).count() == 0:
-            user = User(name=name, event=event)
-            session.add(user)
+        if event:
+            if session.query(User).filter_by(name=name, event=event).count() == 0:
+                user = User(name=name, event=event)
+                session.add(user)
+            else:
+                return False
         else:
             return False
 
@@ -59,7 +62,7 @@ def find_all_users():
 
 def find_event(name):
     with Session.begin() as session:
-        event = session.query(Event).filter_by(name=name).all()
+        event = session.query(Event).filter_by(name=name).first()
         session.expunge_all()
         return event
 
@@ -75,4 +78,23 @@ def find_event_users(event_name):
         users = session.query(User).filter_by(event=event).all()
         session.expunge_all()
         return users
+
+def delete_event(event_name):
+    with Session.begin() as session:
+        event = session.query(Event).filter_by(name=event_name).first()
+        if event:
+            users = session.query(User).filter_by(event=event).delete()
+            session.delete(event)
+        else:
+            return False
+
+def delete_user(user_name, event_name):
+    with Session.begin() as session:
+        event = session.query(Event).filter_by(name=event_name).first()
+        if event:
+            user = session.query(User).filter_by(event=event).delete()
+        else:
+            return False
+
+        
 
