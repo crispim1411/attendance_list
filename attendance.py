@@ -15,7 +15,7 @@ HELP =  "Listar os eventos cadastrados\n" \
         "Para cancelar inscrição em um evento\n" \
         "```#cancelar <nome do evento>```\n" \
         "Para excluir um evento\n" \
-        "```#excluir <nome do evento>```\n\n" \
+        "```#excluir <nome do evento>```\n" \
         "**CRISPY CORPORATIONS**\n" 
 
 async def process_data(message):
@@ -25,82 +25,81 @@ async def process_data(message):
         await message.channel.send(HELP)
         return
 
-    if len(itens) == 1:
-        if message.content.startswith(config.PREFIX + 'eventos'):
-            await message.channel.send('Eventos cadastrados: ')
-            events = database.find_all_events()
-            if len(events) == 0:
-                await message.channel.send('- Não há eventos cadastrados -')
-            for event in events:
-                await message.channel.send(f"- {event.name}")
-        
-    else:
-        content = ' '.join(itens[1:])
+    if len(itens) == 1 and message.content.startswith(config.PREFIX + 'eventos'):
+        await message.channel.send('Eventos cadastrados: ')
+        events = database.find_all_events()
+        if len(events) == 0:
+            await message.channel.send('- Não há eventos cadastrados -')
+        for event in events:
+            await message.channel.send(f"- {event.name}")
+        return
 
-        if message.content.startswith(config.PREFIX + 'novo'):
-            result = database.insert_event(content)
-            if result == False:
-                await message.channel.send(f'Este evento já está cadastrado.')
-            else:
-                msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de alunos de **{content}**')
-                await msg.add_reaction(config.CHECK)
+    content = ' '.join(itens[1:])
 
-        elif message.content.startswith(config.PREFIX + 'inscrever'):
-            evento = database.find_event(content)
-            if evento:
-                msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de alunos de **{content}**')
-                await msg.add_reaction(config.CHECK)
-            else:
-                await message.channel.send(f'Este evento não está cadastrado. Use o comando #novo para inserir um novo evento.')
-
-        elif message.content.startswith(config.PREFIX + 'chamada'):
-            if database.find_event(content) == None:
-                await message.channel.send("Evento não cadastrado.")
-                return
-
-            users = database.find_event_users(content)
-            if len(users) == 0:
-                await message.channel.send("Não há alunos inscritos.")
-            for i, user in enumerate(users, start=1):
-                await message.channel.send(f'{i}) {user.mention}')
-
-        elif message.content.startswith(config.PREFIX + 'listar'):
-            if database.find_event(content) == None:
-                await message.channel.send("Evento não cadastrado.")
-                return
-
-            users = database.find_event_users(content)
-            if len(users) == 0:
-                await message.channel.send("Não há alunos inscritos.")
-            for i, user in enumerate(users, start=1):
-                await message.channel.send(f'{i}) {user.name}')
-
-        elif message.content.startswith(config.PREFIX + 'sair'):
-            evento = database.find_event(content)
-            if evento:
-                msg = await message.channel.send(f'Interaja aqui para retirar seu nome da lista de alunos de **{content}**')
-                await msg.add_reaction(config.CROSS)
-            else:
-                await message.channel.send(f'Este evento não está cadastrado.')
-
-        elif message.content.startswith(config.PREFIX + 'excluir'):
-            result = database.delete_event(content)
-            if result == False:
-                await message.channel.send(f'Este evento não está cadastrado.')
-            else:
-                await message.channel.send(f'Evento removido.')
-        
+    if message.content.startswith(config.PREFIX + 'novo'):
+        result = database.insert_event(content)
+        if result == False:
+            await message.channel.send(f'Este evento já está cadastrado.')
         else:
-            await message.channel.send("Comando incorreto. Use #help para ver os comandos.")
+            msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de alunos de **{content}**')
+            await msg.add_reaction(config.CHECK)
 
-async def insert_to_database(message, name, mention, event):
+    elif message.content.startswith(config.PREFIX + 'inscrever'):
+        evento = database.find_event(content)
+        if evento:
+            msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de alunos de **{content}**')
+            await msg.add_reaction(config.CHECK)
+        else:
+            await message.channel.send(f'Este evento não está cadastrado. Use o comando #novo para inserir um novo evento.')
+
+    elif message.content.startswith(config.PREFIX + 'chamada'):
+        if database.find_event(content) == None:
+            await message.channel.send("Evento não cadastrado.")
+            return
+
+        users = database.find_event_users(content)
+        if len(users) == 0:
+            await message.channel.send("Não há alunos inscritos.")
+        for i, user in enumerate(users, start=1):
+            await message.channel.send(f'{i}) {user.mention}')
+
+    elif message.content.startswith(config.PREFIX + 'listar'):
+        if database.find_event(content) == None:
+            await message.channel.send("Evento não cadastrado.")
+            return
+
+        users = database.find_event_users(content)
+        if len(users) == 0:
+            await message.channel.send("Não há alunos inscritos.")
+        for i, user in enumerate(users, start=1):
+            await message.channel.send(f'{i}) {user.name}')
+
+    elif message.content.startswith(config.PREFIX + 'sair'):
+        evento = database.find_event(content)
+        if evento:
+            msg = await message.channel.send(f'Interaja aqui para retirar seu nome da lista de alunos de **{content}**')
+            await msg.add_reaction(config.CROSS)
+        else:
+            await message.channel.send(f'Este evento não está cadastrado.')
+
+    elif message.content.startswith(config.PREFIX + 'excluir'):
+        result = database.delete_event(content)
+        if result == False:
+            await message.channel.send(f'Este evento não está cadastrado.')
+        else:
+            await message.channel.send(f'Evento removido.')
+    
+    else:
+        await message.channel.send("Comando incorreto. Use #help para ver os comandos.")
+
+async def insert_to_event(message, name, mention, event):
     result = database.insert_user(name, mention, event)
     if result == False:
         await message.channel.send("Você já está inscrito nessa aula.")
     else:
         await message.channel.send(f"{name} inscrito(a) em {event}")
 
-async def remove_from_database(message, name, mention, event):
+async def remove_from_event(message, name, mention, event):
     result = database.delete_user(mention, event)
     if result == False:
         await message.channel.send("Não foi possível remover a inscrição.")

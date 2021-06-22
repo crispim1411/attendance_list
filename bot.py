@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 
 import config
-from attendance import process_data, insert_to_database, remove_from_database
+import attendance
 
 client = commands.Bot(command_prefix = config.PREFIX)
             
@@ -17,7 +17,7 @@ async def on_message(message):
         return
 
     if message.content.startswith(config.PREFIX):
-        await process_data(message)
+        await attendance.process_data(message)
 
 @client.event
 async def on_reaction_add(reaction, user):
@@ -31,8 +31,8 @@ async def on_reaction_add(reaction, user):
 
         if config.BOT not in str(user):
             if reaction == config.CHECK.encode('unicode-escape'):
-                await insert_to_database(message, user.name, user.mention, current_event)
+                await attendance.insert_to_event(message, user.name, user.mention, current_event)
             elif reaction == config.CROSS.encode('unicode-escape'):
-                await remove_from_database(message, user.name, user.mention, current_event)
+                await attendance.remove_from_event(message, user.name, user.mention, current_event)
             
 client.run(config.TOKEN)
