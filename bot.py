@@ -22,7 +22,6 @@ async def on_message(message):
 
 @client.event
 async def on_reaction_add(reaction, user):
-    channel = client.get_channel(reaction.message.channel.id)
     message = reaction.message
     itens = message.content.split('**')
     reaction = str(reaction).encode('unicode-escape')

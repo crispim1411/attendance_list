@@ -51,12 +51,12 @@ async def process_data(message):
             await msg.add_reaction(CHECK)
 
     elif message.content.startswith(config['PREFIX'] + 'inscrever'):
-        evento = database.find_event(content)
-        if evento:
+        event = database.find_event(content)
+        if event:
             msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de alunos de **{content}**')
             await msg.add_reaction(CHECK)
         else:
-            await message.channel.send(f'Este evento não está cadastrado. Use o comando #novo para inserir um novo evento.')
+            await message.channel.send(f'Este evento não está cadastrado. Use o comando #criar para inserir um novo evento.')
 
     elif message.content.startswith(config['PREFIX'] + 'chamada'):
         if database.find_event(content) == None:
