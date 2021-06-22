@@ -1,22 +1,36 @@
 Lista de chamada
 =================
-Bot para discord feito utilizando Python e SQLAlchemy.
+Bot para discord feito utilizando Python, SQLAlchemy e hospedado na plataforma Heroku.
 
 Rotina de testes
 =================
-pytest tests.py
+  #pytest tests.py
 
-Utilização
-===========
+Instalar dependências
+======================
+  #pip install -r requirements.txt
+
+Inicializar bot
+================
+  #python bot.py
+
+Comandos do bot
+==================
 Listar os eventos cadastrados: 
-#eventos
+.. code-block:: 
+  #eventos
 Para cadastrar um novo evento
-#novo <nome do evento>
+.. code-block:: 
+  #novo <nome do evento>
 Para reabrir inscrições de um evento
-#inscrever <nome do evento>
+.. code-block:: 
+  #inscrever <nome do evento>
 Para realizar chamada de um evento
-#chamada <nome do evento>
+.. code-block:: 
+  #chamada <nome do evento>
 Para cancelar inscrição em um evento
-#cancelar <nome do evento>
+.. code-block:: 
+  #cancelar <nome do evento>
 Para excluir um evento
-#excluir <nome do evento>
+.. code-block:: 
+  #excluir <nome do evento>
