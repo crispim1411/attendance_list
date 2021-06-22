@@ -31,9 +31,9 @@ async def on_reaction_add(reaction, user):
         current_event = itens[1]
 
         if config['BOT'] not in str(user):
-            if reaction == config['CHECK'].encode('unicode-escape'):
+            if reaction == attendance.CHECK.encode('unicode-escape'):
                 await attendance.insert_to_event(message, user.name, user.mention, current_event)
-            elif reaction == config['CROSS'].encode('unicode-escape'):
+            elif reaction == attendance.CROSS.encode('unicode-escape'):
                 await attendance.remove_from_event(message, user.name, user.mention, current_event)
             
 client.run(config['TOKEN'])

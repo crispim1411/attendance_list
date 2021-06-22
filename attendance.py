@@ -6,16 +6,20 @@ import database
 
 config = os.environ
 
+CHECK = '\U00002705'
+CROSS = '\U0000274c'
 HELP =  "Listar os eventos cadastrados\n" \
-        "```#eventos```\n" \
+        "```#listar```\n" \
         "Para cadastrar um novo evento" \
-        "```#novo <nome do evento>```\n" \
+        "```#criar <nome do evento>```\n" \
         "Para reabrir inscrições de um evento\n" \
         "```#inscrever <nome do evento>```\n" \
+        "Para listar os inscritos de um evento\n" \
+        "```#listar <nome do evento>```\n" \
         "Para realizar chamada de um evento\n" \
         "```#chamada <nome do evento>```\n" \
         "Para cancelar inscrição em um evento\n" \
-        "```#cancelar <nome do evento>```\n" \
+        "```#sair <nome do evento>```\n" \
         "Para excluir um evento\n" \
         "```#excluir <nome do evento>```\n" \
         "**CRISPY CORPORATIONS**\n" 
@@ -44,13 +48,13 @@ async def process_data(message):
             await message.channel.send(f'Este evento já está cadastrado.')
         else:
             msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de alunos de **{content}**')
-            await msg.add_reaction(config['CHECK'])
+            await msg.add_reaction(CHECK)
 
     elif message.content.startswith(config['PREFIX'] + 'inscrever'):
         evento = database.find_event(content)
         if evento:
             msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de alunos de **{content}**')
-            await msg.add_reaction(config['CHECK'])
+            await msg.add_reaction(CHECK)
         else:
             await message.channel.send(f'Este evento não está cadastrado. Use o comando #novo para inserir um novo evento.')
 
@@ -80,7 +84,7 @@ async def process_data(message):
         evento = database.find_event(content)
         if evento:
             msg = await message.channel.send(f'Interaja aqui para retirar seu nome da lista de alunos de **{content}**')
-            await msg.add_reaction(config['CROSS'])
+            await msg.add_reaction(CROSS)
         else:
             await message.channel.send(f'Este evento não está cadastrado.')
 
