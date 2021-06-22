@@ -11,7 +11,7 @@ class User(Base):
     name = Column(String, nullable=False)
     mention = Column(String, nullable=False)
     event_id = Column(Integer, ForeignKey('events.id'))
-    event = relationship('Event', backref=backref('users'), cascade="all, delete")
+    event = relationship('Event', backref=backref('users'))
 
     def __repr__(self):
         return f"<User(name={self.name!r}, event={self.event.name!r})>"

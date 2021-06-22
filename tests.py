@@ -72,10 +72,6 @@ def test_delete_user():
     assert user == []
 
 def test_delete_event():
-    result = database.insert_event(event_name)
-    if result == False:
-        print("Evento já existe no banco de dados")
-        assert False
     event = database.find_event(event_name)
     print(f"delete event - before: {event}")
     if event == None:
