@@ -62,7 +62,7 @@ async def process_data(message):
             if len(users) == 0:
                 await message.channel.send("Não há alunos inscritos.")
             for i, user in enumerate(users, start=1):
-                await message.channel.send(f'{i}) {user.name}')
+                await message.channel.send(f'{i}) {user.mention}')
 
         elif message.content.startswith(config.PREFIX + 'listar'):
             if database.find_event(content) == None:
@@ -93,16 +93,16 @@ async def process_data(message):
         else:
             await message.channel.send("Comando incorreto. Use #help para ver os comandos.")
 
-async def insert_to_database(message, user, event):
-    result = database.insert_user(user, event)
+async def insert_to_database(message, name, mention, event):
+    result = database.insert_user(name, mention, event)
     if result == False:
         await message.channel.send("Você já está inscrito nessa aula.")
     else:
-        await message.channel.send(f"{user} inscrito(a) em {event}")
+        await message.channel.send(f"{name} inscrito(a) em {event}")
 
-async def remove_from_database(message, user, event):
-    result = database.delete_user(user, event)
+async def remove_from_database(message, name, mention, event):
+    result = database.delete_user(mention, event)
     if result == False:
         await message.channel.send("Não foi possível remover a inscrição.")
     else:
-        await message.channel.send(f"{user} removido de {event}")
+        await message.channel.send(f"{name} removido de {event}")

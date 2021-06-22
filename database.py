@@ -9,6 +9,7 @@ class User(Base):
 
     id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
     name = Column(String, nullable=False)
+    mention = Column(String, nullable=False)
     event_id = Column(Integer, ForeignKey('events.id'))
     event = relationship('Event', backref=backref('users'), cascade="all, delete")
 
@@ -36,12 +37,12 @@ def insert_event(name):
         else:
             return False
 
-def insert_user(name, event):
+def insert_user(name, mention, event_name):
     with Session.begin() as session:
-        event = session.query(Event).filter_by(name=event).first()
+        event = session.query(Event).filter_by(name=event_name).first()
         if event:
             if session.query(User).filter_by(name=name, event=event).count() == 0:
-                user = User(name=name, event=event)
+                user = User(name=name, mention=mention, event=event)
                 session.add(user)
             else:
                 return False

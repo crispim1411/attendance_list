@@ -31,8 +31,8 @@ async def on_reaction_add(reaction, user):
 
         if config.BOT not in str(user):
             if reaction == config.CHECK.encode('unicode-escape'):
-                await insert_to_database(message, user.mention, current_event)
+                await insert_to_database(message, user.name, user.mention, current_event)
             elif reaction == config.CROSS.encode('unicode-escape'):
-                await remove_from_database(message, user.mention, current_event)
+                await remove_from_database(message, user.name, user.mention, current_event)
             
 client.run(config.TOKEN)
