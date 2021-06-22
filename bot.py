@@ -1,14 +1,12 @@
+import os
 import asyncio 
 import discord
 from discord.ext import commands
 
 import attendance
-try:
-    import config
-except:
-    config = os.environ
 
-client = commands.Bot(command_prefix = config.PREFIX)
+config = os.environ
+client = commands.Bot(command_prefix = config['PREFIX'])
             
 @client.event
 async def on_ready():
@@ -19,7 +17,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith(config.PREFIX):
+    if message.content.startswith(config['PREFIX']):
         await attendance.process_data(message)
 
 @client.event
@@ -32,10 +30,10 @@ async def on_reaction_add(reaction, user):
     if len(itens) > 1:
         current_event = itens[1]
 
-        if config.BOT not in str(user):
-            if reaction == config.CHECK.encode('unicode-escape'):
+        if config['BOT'] not in str(user):
+            if reaction == config['CHECK'].encode('unicode-escape'):
                 await attendance.insert_to_event(message, user.name, user.mention, current_event)
-            elif reaction == config.CROSS.encode('unicode-escape'):
+            elif reaction == config['CROSS'].encode('unicode-escape'):
                 await attendance.remove_from_event(message, user.name, user.mention, current_event)
             
-client.run(config.TOKEN)
+client.run(config['TOKEN'])
