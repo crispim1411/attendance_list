@@ -1,6 +1,6 @@
 Lista de chamada
 =================
-Bot para discord feito utilizando Python e SQLAlchemy.
+Bot para discord feito utilizando Python, SQLAlchemy e hospedado na plataforma Heroku.
 
 Rotina de testes
 =================
