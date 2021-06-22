@@ -2,8 +2,11 @@ import asyncio
 import discord
 from discord.ext import commands
 
-import config
 import attendance
+try:
+    import config
+except:
+    config = os.environ
 
 client = commands.Bot(command_prefix = config.PREFIX)
             
