@@ -65,7 +65,7 @@ def test_delete_user():
     print(f"delete user - before: {[(i.name, i.mention) for i in user]}")
     if user == []:
         assert False
-    result = database.delete_user(user_name, event_name)
+    result = database.delete_user(user_mention, event_name)
     assert result != False
     user = database.find_user(user_name)
     print(f"delete user - after: {[(i.name, i.mention) for i in user]}")
