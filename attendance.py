@@ -3,14 +3,16 @@ import discord
 from discord.utils import get
 
 import database
-
-config = os.environ
+try:
+    from config import config
+except:
+    config = os.environ
 
 CHECK = '\U00002705'
 CROSS = '\U0000274c'
-HELP =  "Listar os eventos cadastrados\n" \
+HELP =  "Para listar os eventos cadastrados\n" \
         "```#listar```\n" \
-        "Para cadastrar um novo evento" \
+        "Para cadastrar um novo evento\n" \
         "```#criar <nome do evento>```\n" \
         "Para reabrir inscrições de um evento\n" \
         "```#inscrever <nome do evento>```\n" \
