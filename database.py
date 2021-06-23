@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer, String, Sequence, ForeignKey
 from sqlalchemy.orm import scoped_session, sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy_utils import database_exists
 
 Base = declarative_base()
 
@@ -27,7 +28,8 @@ class Event(Base):
 
 engine = create_engine('sqlite:///info.db')
 Session = sessionmaker(bind=engine)
-Base.metadata.create_all(engine)
+if database_exists(engine.url) == False:
+    Base.metadata.create_all(engine)
 
 def insert_event(name):
     with Session.begin() as session:
