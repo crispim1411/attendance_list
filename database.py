@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 class Database:
     def __init__(self):
-        url = urlparser(os.environ['DATABASE_URL'])
+        url = urlparse(os.environ['DATABASE_URL'])
         self.connection = connection = psycopg2.connect(
             dbname=url.path[1:],
             user=url.username,
