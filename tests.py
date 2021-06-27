@@ -34,15 +34,19 @@ def test_insert_event():
     event = database.find_event(event_name)
     print(f"insert event: {event}")
     assert event[1] == event_name
+    result = database.insert_event(event_name)
+    assert result == False
     
 def test_insert_user():
     result = database.insert_user(user_name, user_mention, event_name)
     if result == False:
         print("Não foi possível cadastrar o usuário")
         assert False
-    users = database.find_user(user_mention)
+    users = database.find_event_users(event_name)
     print(f"insert user: {[(i[1], i[2], i[3]) for i in users]}")
     assert any([user for user in users if user[1] == user_name])
+    result = database.insert_user(user_name, user_mention, event_name)
+    assert result == False
 
 def test_insert_event_users():
     result1 = database.find_user(user_mention2)

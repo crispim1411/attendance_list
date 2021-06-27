@@ -23,7 +23,7 @@ HELP =  "Para listar os eventos cadastrados\n" \
         "Para cancelar inscrição em um evento\n" \
         "```#sair <nome do evento>```\n" \
         "Para excluir um evento\n" \
-        "```#excluir <nome do evento>```\n" \
+        "```#excluir <nome do evento>```\n\n" \
         "**CRISPY CORPORATIONS**\n" 
 
 async def process_data(message):
@@ -61,11 +61,11 @@ async def process_data(message):
                 msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de **{content}**')
                 await msg.add_reaction(CHECK)
             else:
-                await message.channel.send(f'Este evento não está cadastrado. Use o comando #criar para inserir um novo evento.')
+                await message.channel.send(f'Este evento não está cadastrado.')
 
         elif message.content.startswith(config['PREFIX'] + 'chamada '):
             if database.find_event(content) == None:
-                await message.channel.send("Evento não cadastrado.")
+                await message.channel.send("Este evento não está cadastrado.")
                 return
 
             users = database.find_event_users(content)
@@ -76,7 +76,7 @@ async def process_data(message):
 
         elif message.content.startswith(config['PREFIX'] + 'listar '):
             if database.find_event(content) == None:
-                await message.channel.send("Evento não cadastrado.")
+                await message.channel.send("Este evento não está cadastrado.")
                 return
 
             users = database.find_event_users(content)

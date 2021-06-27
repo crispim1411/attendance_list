@@ -36,12 +36,12 @@ def insert_user(name, mention, event_name):
             SELECT U.* FROM users U
             INNER JOIN events E ON E.id = U.event_id
             WHERE E.name LIKE %s AND U.mention = %s
-            """, (name, mention))
+            """, (event_name, mention,))
         if cursor.fetchone() == None:
             cursor.execute("""
                 INSERT INTO users(name, mention, event_id)
                 VALUES (%s, %s, %s) RETURNING id;
-                """, (name, mention, event[0]))
+                """, (name, mention, event[0],))
         else:
             return False
 
@@ -50,9 +50,6 @@ def find_all_events():
         cursor.execute("SELECT * FROM events")
         events = cursor.fetchall()
         return events
-
-def find_all_users():
-    ...
 
 def find_event(name):
     with connection, connection.cursor() as cursor:
