@@ -72,7 +72,7 @@ async def process_data(message):
             if len(users) == 0:
                 await message.channel.send("Não há inscritos.")
             for i, user in enumerate(users, start=1):
-                await message.channel.send(f'{i}) {user.mention}')
+                await message.channel.send(f'{i}) {user[2]}')
 
         elif message.content.startswith(config['PREFIX'] + 'listar '):
             if database.find_event(content) == None:
@@ -83,7 +83,7 @@ async def process_data(message):
             if len(users) == 0:
                 await message.channel.send("Não há inscritos.")
             for i, user in enumerate(users, start=1):
-                await message.channel.send(f'{i}) {user.name}')
+                await message.channel.send(f'{i}) {user[1]}')
 
         elif message.content.startswith(config['PREFIX'] + 'sair '):
             evento = database.find_event(content)
