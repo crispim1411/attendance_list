@@ -1,6 +1,6 @@
 Lista de chamada
 =================
-Bot para discord feito utilizando Python, SQLAlchemy e hospedado na plataforma Heroku.
+Bot para discord feito utilizando Python e Heroku Postgre como base de dados. A aplicação está hospedada na plataforma Heroku.
 
 Instalar dependências
 ======================
