@@ -17,17 +17,15 @@ connection = psycopg2.connect(
     )
 
 def insert_event(name):
+    event = find_event(name)
+    if event:
+        return False
+
     with connection, connection.cursor() as cursor:
-        cursor.execute("""
-            SELECT * FROM events
-            WHERE name LIKE %s
-            """, (name))
-        if cursor.fetchone():
-            return False
         cursor.execute("""
             INSERT INTO events(name)
             VALUES (%s) RETURNING id;
-            """, (name))
+            """, (name,))
         event_id = cursor.fetchone()[0]
         return event_id
 
@@ -65,8 +63,14 @@ def find_event(name):
         event = cursor.fetchone()
         return event
 
-def find_user(name):
-    ...
+def find_user(mention):
+    with connection, connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT * FROM users
+            WHERE mention = %s
+            """, (mention,))
+        event = cursor.fetchall()
+        return event
 
 def find_event_users(event_name):
     with connection, connection.cursor() as cursor:
@@ -79,9 +83,33 @@ def find_event_users(event_name):
         return users
 
 def delete_event(event_name):
-    ...
+    event = find_event(event_name) 
+    if not event:
+        return False
+
+    with connection, connection.cursor() as cursor:
+        cursor.execute("""
+            DELETE FROM users
+            WHERE event_id = %s""", (event[0],))
+        cursor.execute("""
+            DELETE FROM events
+            WHERE id = %s""", (event[0],))
 
 def delete_user(user_mention, event_name):
-    ...
+    event = find_event(event_name) 
+    if not event:
+        return False
 
-
+    with connection, connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT U.* FROM users U
+            INNER JOIN events E ON E.id = U.event_id
+            WHERE E.id = %s AND U.mention = %s
+            """, (event[0], user_mention))
+        user = cursor.fetchone()
+        if user:
+            cursor.execute("""
+                DELETE FROM users
+                WHERE users.mention = %s""", (user[2],))
+        else:
+            return False
