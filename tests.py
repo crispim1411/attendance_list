@@ -28,9 +28,7 @@ def test_find_inexistent_event():
 def test_insert_event():
     # tenta criar evento 1
     result = database.insert_event(event_name)
-    if result == False:
-        print(f"{event_name} já existe no banco de dados")
-        assert False
+    assert result != False
     # checa se evento foi criado
     event = database.find_event(event_name)
     assert event[1] == event_name
@@ -40,9 +38,7 @@ def test_insert_event():
 
     #repete para event_name2
     result2 = database.insert_event(event_name2)
-    if result2 == False:
-        print(f"{event_name} já existe no banco de dados")
-        assert False
+    assert result2 != False
     event2 = database.find_event(event_name2)
     assert event2[1] == event_name2
     result2 = database.insert_event(event_name2)
@@ -51,14 +47,10 @@ def test_insert_event():
 def test_insert_user():
     # checa se o usuario não existe no evento
     users = database.find_event_users(event_name)
-    if any([user for user in users if user[1] == user_name]):
-        print(f"User {user_name} já cadastrado")
-        assert False
+    assert not any([user for user in users if user[1] == user_name])
     # insere o usuario
     result = database.insert_user(user_name, user_mention, event_name)
-    if result == False:
-        print(f"Não foi possível cadastrar o {user_name} em {event_name}")
-        assert False
+    assert result != False
     # checa se o usuário foi inserido
     users = database.find_event_users(event_name)
     assert any([user for user in users if user[1] == user_name])
@@ -68,13 +60,9 @@ def test_insert_user():
     
     # repete para user_name2 -> event_name
     users = database.find_event_users(event_name)
-    if any([user for user in users if user[1] == user_name2]):
-        print(f"User {user_name2} já cadastrado")
-        assert False
+    assert not any([user for user in users if user[1] == user_name2])
     result = database.insert_user(user_name2, user_mention2, event_name)
-    if result == False:
-        print(f"Não foi possível cadastrar o {user_name2} em {event_name}")
-        assert False
+    assert result != False
     users = database.find_event_users(event_name)
     assert any([user for user in users if user[1] == user_name2])
     result = database.insert_user(user_name2, user_mention2, event_name)
@@ -82,13 +70,9 @@ def test_insert_user():
     
     #repete para user_name3 -> event_name
     users = database.find_event_users(event_name)
-    if any([user for user in users if user[1] == user_name3]):
-        print(f"User {user_name3} já cadastrado")
-        assert False
+    assert not any([user for user in users if user[1] == user_name3])
     result = database.insert_user(user_name3, user_mention3, event_name)
-    if result == False:
-        print(f"Não foi possível cadastrar o {user_name3} em {event_name}")
-        assert False
+    assert result != False
     users = database.find_event_users(event_name)
     assert any([user for user in users if user[1] == user_name3])
     result = database.insert_user(user_name3, user_mention3, event_name)
@@ -96,13 +80,9 @@ def test_insert_user():
 
     # repete para user_name2 -> event_name2
     users = database.find_event_users(event_name2)
-    if any([u for u in users if u[1] == user_name2]):
-        print(f"User {user_name2} já cadastrado")
-        assert False
+    assert not any([u for u in users if u[1] == user_name2])
     result = database.insert_user(user_name2, user_mention2, event_name2)
-    if result == False:
-        print(f"Não foi possível cadastrar o {user_name2} em {event_name2}")
-        assert False
+    assert result != False
     users = database.find_event_users(event_name2)
     assert any([user for user in users if user[1] == user_name2])
     result = database.insert_user(user_name2, user_mention2, event_name2)
@@ -111,9 +91,7 @@ def test_insert_user():
 def test_delete_user():
     # checa se existe no evento 1
     users = database.find_event_users(event_name)
-    if not any([user for user in users if user[1] == user_name2]):
-        print(f"User {user_mention2} not found")
-        assert False
+    assert any([user for user in users if user[1] == user_name2])
     # removido do evento 1
     result = database.delete_user(user_mention2, event_name)
     assert result != False
@@ -127,8 +105,8 @@ def test_delete_user():
 def test_delete_event():
     # checa se o evento existe
     event = database.find_event(event_name)
-    if event == None:
-        assert False
+    event_id = event[0]
+    assert event != None
     # deleta o evento
     result = database.delete_event(event_name)
     assert result != False
@@ -138,9 +116,14 @@ def test_delete_event():
 
     # repete para evento 2
     event = database.find_event(event_name2)
-    if event == None:
-        assert False
+    event_id = event[0]
+    assert event != None
     result = database.delete_event(event_name2)
     assert result != False
     event = database.find_event(event_name2)
     assert event == None
+
+    #checar se todos os usuários foram deletados
+    assert database.find_user(user_mention) == []
+    assert database.find_user(user_mention2) == []
+    assert database.find_user(user_mention3) == []
