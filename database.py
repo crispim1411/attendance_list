@@ -146,7 +146,8 @@ def delete_user(user_mention, event_name, connection=None):
             if user:
                 cursor.execute("""
                     DELETE FROM users
-                    WHERE users.mention = %s""", (user[2],))
+                    WHERE users.mention = %s
+                        AND users.event_id = %s""", (user[2], user[3],))
             else:
                 return False
     finally:
