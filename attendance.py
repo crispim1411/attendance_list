@@ -1,6 +1,5 @@
 import os
 import discord
-from discord.utils import get
 
 import database
 try:
