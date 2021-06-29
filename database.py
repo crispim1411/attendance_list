@@ -39,9 +39,9 @@ def insert_event(name, connection=None):
         with connection, connection.cursor() as cursor:
             cursor.execute("""
                 INSERT INTO events(name)
-                VALUES (%s) RETURNING id;
+                VALUES (%s)
                 """, (name,))
-            return cursor.fetchone()[0] #event_id
+            return True
     finally:
         connection.close()
 
@@ -51,15 +51,14 @@ def insert_user(name, mention, event_name, connection=None):
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute(""" 
-                SELECT U.* FROM users U
-                INNER JOIN events E ON E.id = U.event_id
-                WHERE E.name LIKE %s AND U.mention = %s
-                """, (event_name, mention,))
+                SELECT * FROM users
+                WHERE mention = %s AND event_id = %s
+                """, (mention, event[0],))
 
             if cursor.fetchone() == None:
                 cursor.execute("""
                     INSERT INTO users(name, mention, event_id)
-                    VALUES (%s, %s, %s) RETURNING id;
+                    VALUES (%s, %s, %s)
                     """, (name, mention, event[0],))
             else:
                 return False
@@ -117,7 +116,6 @@ def delete_event(event_name, connection=None):
     event = find_event(event_name) 
     if not event:
         return False
-
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute("""
@@ -132,22 +130,18 @@ def delete_event(event_name, connection=None):
 @connect_to_database
 def delete_user(user_mention, event_name, connection=None):
     event = find_event(event_name) 
-    if not event:
-        return False
-
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute("""
-                SELECT U.* FROM users U
-                INNER JOIN events E ON E.id = U.event_id
-                WHERE E.id = %s AND U.mention = %s
-                """, (event[0], user_mention))
-            user = cursor.fetchone()
-            if user:
+                SELECT * FROM users
+                WHERE mention = %s AND event_id = %s
+                """, (user_mention, event[0],))
+
+            if cursor.fetchone():
                 cursor.execute("""
                     DELETE FROM users
-                    WHERE users.mention = %s
-                        AND users.event_id = %s""", (user[2], user[3],))
+                    WHERE mention = %s AND event_id = %s
+                    """, (user_mention, event[0],))
             else:
                 return False
     finally:
