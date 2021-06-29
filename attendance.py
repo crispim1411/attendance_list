@@ -104,6 +104,10 @@ async def process_data(message):
             await message.channel.send("Comando incorreto. Use #help para ver os comandos.")
 
 async def insert_to_event(message, name, mention, event):
+    if database.find_event(event) == None:
+        await message.channel.send("Este evento não está cadastrado.")
+        return
+
     result = database.insert_user(name, mention, event)
     if result == False:
         await message.channel.send(f"**{name}** já possui inscrição em **{event}**.")
@@ -111,6 +115,10 @@ async def insert_to_event(message, name, mention, event):
         await message.channel.send(f"Realizada inscrição de **{name}** em **{event}**.")
 
 async def remove_from_event(message, name, mention, event):
+    if database.find_event(event) == None:
+        await message.channel.send("Este evento não está cadastrado.")
+        return
+
     result = database.delete_user(mention, event)
     if result == False:
         await message.channel.send(f"**{name}** não possui inscrição em **{event}**.")

@@ -34,7 +34,6 @@ def insert_event(name, connection=None):
     event = find_event(name)
     if event:
         return False
-
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute("""
