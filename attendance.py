@@ -11,9 +11,11 @@ CHECK = '\U00002705'
 CROSS = '\U0000274c'
 DELETE_WARN = 60
 DELETE_CALL = 120
+DELETE_HELP = 300
 RED = 0xf83629
 YELLOW = 0xe7f337
 BLUE = 0x538fdf
+GREEN = 0x6dc22c
 HELP =  "Para listar os eventos cadastrados\n" \
         "```#listar```\n" \
         "Para cadastrar um novo evento\n" \
@@ -36,7 +38,8 @@ async def process_data(message):
 
     if message.content == config['PREFIX'] or message.content == config['PREFIX'] + 'help':
         await message.channel.send(
-            embed = Embed(title="Comandos", description=HELP, color=BLUE))
+            embed = Embed(title="Comandos", description=HELP, color=BLUE),
+            delete_after = DELETE_HELP)
         return
 
     if len(itens) == 1:
@@ -196,7 +199,8 @@ async def process_data(message):
             else:
                 description = f"Confirme a remoção do evento **{content}**"
                 msg = await message.channel.send(
-                    embed=Embed(title="Excluir evento", description=description, color=YELLOW))
+                    embed=Embed(title="Excluir evento", description=description, color=YELLOW),
+                    delete_after=DELETE_WARN)
                 await msg.add_reaction(CROSS)
 
         else:
@@ -259,5 +263,5 @@ async def remove_event(message, event):
         await message.channel.send(embed=embed_message, delete_after=DELETE_WARN)
     else:
         description = "Evento removido com sucesso"
-        embed_message = Embed(title="Excluir evento", description=description, color=YELLOW)
+        embed_message = Embed(title=f"Excluir evento {CHECK}", description=description, color=GREEN)
         await message.channel.send(embed=embed_message, delete_after=DELETE_WARN)
