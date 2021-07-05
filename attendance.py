@@ -41,8 +41,8 @@ async def process_data(message):
 
     if len(itens) == 1:
         if message.content == config['PREFIX'] + 'listar':
-            description = LOADING
-            embed_message = Embed(title="Eventos cadastrados", description=description, color=YELLOW)
+            
+            embed_message = Embed(title="Eventos cadastrados", color=YELLOW)
             msg = await message.channel.send(embed=embed_message)
             
             events = database.find_all_events()
@@ -50,19 +50,30 @@ async def process_data(message):
                 embed_message.description = "- Não há eventos cadastrados -"
                 await msg.edit(embed=embed_message)
                 return
+            
+            embed_message.add_field(name="Eventos", value=LOADING, inline=True)
+            embed_message.add_field(name="Inscritos", value="-", inline=True)
+            await msg.edit(embed=embed_message)
 
+            description = LOADING
+            counter_text = ""
+            embed_dict = embed_message.to_dict()
             for event in events:
                 if description == LOADING:
                     description = f"{event[1]}\n" + LOADING
                 else:
                     items = description.split(LOADING)
                     description = items[0] + f"{event[1]}\n" + LOADING
-                embed_message.description = description
-                await msg.edit(embed=embed_message)
 
+                num_users = database.count_event_users(event[1])
+                counter_text += f"""{num_users}\n"""
+                embed_dict['fields'][0]['value'] = description
+                embed_dict['fields'][1]['value'] = counter_text
+                await msg.edit(embed=Embed.from_dict(embed_dict))
+            
             items = description.split(LOADING)
-            embed_message.description = items[0]
-            await msg.edit(embed=embed_message)
+            embed_dict['fields'][0]['value'] = items[0]
+            await msg.edit(embed=Embed.from_dict(embed_dict))
             
         else:
             description = "Comando incorreto. Use #help para ver os comandos."
@@ -243,10 +254,10 @@ async def remove_event(message, event):
     # checar se tem permissão para deletar
     result = database.delete_event(event)
     if result == False:
-        description = f"Não foi possível remover o evento"
+        description = "Não foi possível remover o evento"
         embed_message = Embed(title="Aviso", description=description, color=RED)
         await message.channel.send(embed=embed_message, delete_after=DELETE_WARN)
     else:
-        description = f"Evento removido com sucesso"
+        description = "Evento removido com sucesso"
         embed_message = Embed(title="Excluir evento", description=description, color=YELLOW)
         await message.channel.send(embed=embed_message, delete_after=DELETE_WARN)
