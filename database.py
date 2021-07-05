@@ -68,7 +68,7 @@ def insert_user(name, mention, event_name, connection=None):
 def find_all_events(connection=None):
     try:
         with connection, connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM events")
+            cursor.execute("SELECT * FROM events ORDER BY id")
             return cursor.fetchall()
     finally:
         connection.close()
@@ -105,6 +105,7 @@ def find_event_users(event_name, connection=None):
                 SELECT U.* FROM users U
                 INNER JOIN events E ON E.id = U.event_id
                 WHERE E.name LIKE %s
+                ORDER BY U.id
                 """, (event_name,))
             return cursor.fetchall()
     finally:
