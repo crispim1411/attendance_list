@@ -7,39 +7,38 @@ try:
 except:
     config = os.environ
 
+# Emojis
 CHECK = '\U00002705'
 CROSS = '\U0000274c'
+# Tempo auto delete
 DELETE_WARN = 60
 DELETE_CALL = 120
 DELETE_HELP = 300
+# Cores
 RED = 0xf83629
 YELLOW = 0xe7f337
 BLUE = 0x538fdf
 GREEN = 0x6dc22c
-HELP =  "Para listar os eventos cadastrados\n" \
-        "```#listar```\n" \
-        "Para cadastrar um novo evento\n" \
-        "```#criar <nome do evento>```\n" \
-        "Para reabrir inscrições de um evento\n" \
-        "```#inscrever <nome do evento>```\n" \
-        "Para listar os inscritos de um evento\n" \
-        "```#listar <nome do evento>```\n" \
-        "Para realizar chamada de um evento\n" \
-        "```#chamada <nome do evento>```\n" \
-        "Para cancelar inscrição em um evento\n" \
-        "```#sair <nome do evento>```\n" \
-        "Para excluir um evento\n" \
-        "```#excluir <nome do evento>```\n\n" \
-        "**CRISPY CORPORATIONS**\n" 
+# Mensagens
 LOADING = "carregando..."
 
 async def process_data(message):
     itens = message.content.split(' ')
 
     if message.content == config['PREFIX'] or message.content == config['PREFIX'] + 'help':
-        await message.channel.send(
-            embed = Embed(title="Comandos", description=HELP, color=BLUE),
-            delete_after = DELETE_HELP)
+        
+        embed_message = Embed(title="Comandos", color=BLUE)
+        embed_message.add_field(name="Listar os eventos cadastrados", value="```#listar```", inline=False)
+        embed_message.add_field(name="Cadastrar um novo evento", value="```#criar <nome do evento>```", inline=False)
+        embed_message.add_field(name="Reabrir inscrições de um evento", value="```#inscrever <nome do evento>```", inline=False)
+        embed_message.add_field(name="Listar os inscritos de um evento", value="```#listar <nome do evento>```", inline=False)
+        embed_message.add_field(name="Realizar chamada de um evento", value="```#chamada <nome do evento>```", inline=False)
+        embed_message.add_field(name="Cancelar inscrição em um evento", value="```#sair <nome do evento>```", inline=False)
+        embed_message.add_field(name="Excluir um evento", value="```#excluir <nome do evento>```", inline=False)
+        embed_message.set_footer(
+            text="CRISPY CORPORATIONS", 
+            icon_url="https://static.wikia.nocookie.net/digimon-adventure5140/images/f/fd/Digivice_tri.png/revision/latest?cb=20170328025147")
+        await message.channel.send(embed = embed_message, delete_after = DELETE_HELP)
         return
 
     if len(itens) == 1:
