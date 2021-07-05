@@ -25,10 +25,13 @@ async def on_message(message):
 
 @client.event
 async def on_reaction_add(reaction, user):
+    if len(reaction.message.embeds) == 0:
+        itens = reaction.message.content.split('**')
+    else:
+        embed_description = reaction.message.embeds[0].description
+        itens = embed_description.split('**')
     message = reaction.message
-    itens = message.content.split('**')
     reaction = str(reaction).encode('unicode-escape')
-
     if len(itens) > 1:
         current_event = itens[1]
 
@@ -36,6 +39,9 @@ async def on_reaction_add(reaction, user):
             if reaction == attendance.CHECK.encode('unicode-escape'):
                 await attendance.insert_to_event(message, user.name, user.mention, current_event)
             elif reaction == attendance.CROSS.encode('unicode-escape'):
-                await attendance.remove_from_event(message, user.name, user.mention, current_event)
+                if message.embeds[0].title == "Excluir evento":
+                    await attendance.remove_event(message, current_event)
+                else:
+                    await attendance.remove_from_event(message, user.name, user.mention, current_event)
             
 client.run(config['TOKEN'])

@@ -1,5 +1,5 @@
 import os
-import discord
+from discord import Embed
 
 import database
 try:
@@ -9,6 +9,11 @@ except:
 
 CHECK = '\U00002705'
 CROSS = '\U0000274c'
+DELETE_WARN = 15
+DELETE_CALL = 120
+RED = 0xf83629
+YELLOW = 0xe7f337
+BLUE = 0x538fdf
 HELP =  "Para listar os eventos cadastrados\n" \
         "```#listar```\n" \
         "Para cadastrar um novo evento\n" \
@@ -24,24 +29,46 @@ HELP =  "Para listar os eventos cadastrados\n" \
         "Para excluir um evento\n" \
         "```#excluir <nome do evento>```\n\n" \
         "**CRISPY CORPORATIONS**\n" 
+LOADING = "carregando..."
 
 async def process_data(message):
     itens = message.content.split(' ')
 
     if message.content == config['PREFIX'] or message.content == config['PREFIX'] + 'help':
-        await message.channel.send(HELP)
+        await message.channel.send(
+            embed = Embed(title="Comandos", description=HELP, color=BLUE))
         return
 
     if len(itens) == 1:
         if message.content == config['PREFIX'] + 'listar':
-            await message.channel.send('Eventos cadastrados: ')
+            description = LOADING
+            embed_message = Embed(title="Eventos cadastrados", description=description, color=YELLOW)
+            msg = await message.channel.send(embed=embed_message)
+            
             events = database.find_all_events()
             if len(events) == 0:
-                await message.channel.send('- Não há eventos cadastrados -')
+                embed_message.description = "- Não há eventos cadastrados -"
+                await msg.edit(embed=embed_message)
+                return
+
             for event in events:
-                await message.channel.send(f"- {event[1]}")
+                if description == LOADING:
+                    description = f"{event[1]}\n" + LOADING
+                else:
+                    items = description.split(LOADING)
+                    description = items[0] + f"{event[1]}\n" + LOADING
+                embed_message.description = description
+                await msg.edit(embed=embed_message)
+
+            items = description.split(LOADING)
+            embed_message.description = items[0]
+            await msg.edit(embed=embed_message)
+            
         else:
-            await message.channel.send("Comando incorreto. Use #help para ver os comandos.")
+            description = "Comando incorreto. Use #help para ver os comandos."
+            await message.channel.send(
+                embed=Embed(title="Aviso", description=description, color=RED), 
+                delete_after=DELETE_WARN)
 
     else:
         content = ' '.join(itens[1:])
@@ -49,77 +76,177 @@ async def process_data(message):
         if message.content.startswith(config['PREFIX'] + 'criar '):
             result = database.insert_event(content)
             if result == False:
-                await message.channel.send(f'Este evento já está cadastrado.')
+                description = "Este evento já está cadastrado."
+                await message.channel.send(
+                    embed=Embed(title="Aviso", description=description, color=RED), 
+                    delete_after=DELETE_WARN)
             else:
-                msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de **{content}**.')
+                description = f"Interaja aqui para se inscrever na lista de **{content}**."
+                embed_message = Embed(title="Novo evento", description=description, color=YELLOW)
+                embed_message.add_field(name="Inscritos", value="-", inline=False)
+                msg = await message.channel.send(embed=embed_message)
                 await msg.add_reaction(CHECK)
 
         elif message.content.startswith(config['PREFIX'] + 'inscrever '):
             event = database.find_event(content)
             if event:
-                msg = await message.channel.send(f'Interaja aqui para se inscrever na lista de **{content}**.')
+                description = f"Interaja aqui para se inscrever na lista de **{content}**."
+                embed_message = Embed(title="Inscrição", description=description, color=YELLOW)
+                embed_message.add_field(name="Inscritos", value="-", inline=False)
+                msg = await message.channel.send(embed=embed_message)
                 await msg.add_reaction(CHECK)
             else:
-                await message.channel.send(f'Este evento não está cadastrado.')
+                description = "Este evento não está cadastrado."
+                await message.channel.send(
+                    embed=Embed(title="Aviso", description=description, color=RED), 
+                    delete_after=DELETE_WARN)
 
         elif message.content.startswith(config['PREFIX'] + 'chamada '):
             if database.find_event(content) == None:
-                await message.channel.send("Este evento não está cadastrado.")
+                description = "Este evento não está cadastrado."
+                await message.channel.send(
+                    embed=Embed(title="Aviso", description=description, color=RED), 
+                    delete_after=DELETE_WARN)
                 return
 
             users = database.find_event_users(content)
+            description = LOADING
+            embed_message = Embed(title=f"Chamada {content}", description=description, color=YELLOW)
+            msg = await message.channel.send(embed=embed_message, delete_after=DELETE_CALL)
             if len(users) == 0:
-                await message.channel.send("- Não há inscritos -")
+                embed_message.description = "- Não há inscritos -"
+                await msg.edit(embed=embed_message)
+                return
+
             for i, user in enumerate(users, start=1):
-                await message.channel.send(f'{i}) {user[2]}')
+                if description == LOADING:
+                    description = f"{i}) {user[2]}\n" + LOADING
+                else:
+                    items = description.split(LOADING)
+                    description = items[0] + f"{i}) {user[2]}\n" + LOADING
+                embed_message.description = description
+                await msg.edit(embed=embed_message)
+
+            items = description.split(LOADING)
+            embed_message.description = items[0]
+            await msg.edit(embed=embed_message)
 
         elif message.content.startswith(config['PREFIX'] + 'listar '):
             if database.find_event(content) == None:
-                await message.channel.send("Este evento não está cadastrado.")
+                description = "Este evento não está cadastrado."
+                await message.channel.send(
+                    embed=Embed(title="Aviso", description=description, color=RED), 
+                    delete_after=DELETE_WARN)
                 return
 
             users = database.find_event_users(content)
+            description = LOADING
+            embed_message = Embed(title=f"Listagem {content}", description=description, color=YELLOW)
+            msg = await message.channel.send(embed=embed_message, delete_after=DELETE_CALL)
             if len(users) == 0:
-                await message.channel.send("- Não há inscritos -")
+                embed_message.description = "- Não há inscritos -"
+                await msg.edit(embed=embed_message)
+                return
+
             for i, user in enumerate(users, start=1):
-                await message.channel.send(f'{i}) {user[1]}')
+                if description == LOADING:
+                    description = f"{i}) {user[1]}\n"
+                else:
+                    items = description.split(LOADING)
+                    description = items[0] + f"{i}) {user[1]}\n" + LOADING
+                embed_message.description = description
+                await msg.edit(embed=embed_message)
+            
+            items = description.split(LOADING)
+            embed_message.description = items[0]
+            await msg.edit(embed=embed_message)
 
         elif message.content.startswith(config['PREFIX'] + 'sair '):
             evento = database.find_event(content)
             if evento:
-                msg = await message.channel.send(f'Interaja aqui para retirar seu nome da lista de **{content}**.')
+                description = f"Interaja aqui para retirar seu nome da lista de **{content}**."
+                embed_message = Embed(title=f"Remover inscrição", description=description, color=YELLOW)
+                embed_message.add_field(name="Removidos", value="-", sinline=False)
+                msg = await message.channel.send(embed=embed_message)
                 await msg.add_reaction(CROSS)
             else:
-                await message.channel.send(f'Este evento não está cadastrado.')
+                description = "Este evento não está cadastrado."
+                await message.channel.send(
+                    embed=Embed(title="Aviso", description=description, color=RED), 
+                    delete_after=DELETE_WARN)
 
         elif message.content.startswith(config['PREFIX'] + 'excluir '):
-            result = database.delete_event(content)
+            result = database.find_event(content)
             if result == False:
-                await message.channel.send(f'Este evento não está cadastrado.')
+                description = "Este evento não está cadastrado."
+                await message.channel.send(
+                    embed=Embed(title="Aviso", description=description, color=RED), 
+                    delete_after=DELETE_WARN)
             else:
-                await message.channel.send(f'Evento removido.')
+                description = f"Confirme a remoção do evento **{content}**."
+                msg = await message.channel.send(
+                    embed=Embed(title="Excluir evento", description=description, color=YELLOW))
+                await msg.add_reaction(CROSS)
 
         else:
-            await message.channel.send("Comando incorreto. Use #help para ver os comandos.")
+            description = "Comando incorreto. Use #help para ver os comandos."
+            await message.channel.send(
+                embed=Embed(title="Aviso", description=description, color=RED), 
+                delete_after=DELETE_WARN)
 
 async def insert_to_event(message, name, mention, event):
     if database.find_event(event) == None:
-        await message.channel.send("Este evento não está cadastrado.")
+        description = "Este evento não está cadastrado."
+        embed_message = Embed(title="Aviso", description=description, color=RED)
+        await message.channel.send(embed=embed_message, delete_after=DELETE_WARN)
         return
 
     result = database.insert_user(name, mention, event)
     if result == False:
-        await message.channel.send(f"**{name}** já possui inscrição em **{event}**.")
+        description = f"**{name}** já possui inscrição em **{event}**."
+        embed_message = Embed(title="Aviso", description=description, color=RED)
+        await message.channel.send(embed=embed_message, delete_after=DELETE_WARN)
     else:
-        await message.channel.send(f"Realizada inscrição de **{name}** em **{event}**.")
+        embed_message = message.embeds[0]
+        embed_dict = embed_message.to_dict()
+        edited_text = embed_dict['fields'][0]['value']
+        if edited_text == "-":
+            edited_text = ""
+        edited_text += f"\n{name}"
+        embed_dict['fields'][0]['value'] = edited_text
+        await message.edit(embed=Embed.from_dict(embed_dict))
 
 async def remove_from_event(message, name, mention, event):
     if database.find_event(event) == None:
-        await message.channel.send("Este evento não está cadastrado.")
+        description = "Este evento não está cadastrado."
+        embed_message = Embed(title="Aviso", description=description, color=RED)
+        await message.channel.send(embed=embed_message, delete_after=DELETE_WARN)
         return
 
     result = database.delete_user(mention, event)
     if result == False:
-        await message.channel.send(f"**{name}** não possui inscrição em **{event}**.")
+        description = f"**{name}** não possui inscrição em **{event}**."
+        embed_message = Embed(title="Aviso", description=description, color=RED)
+        await message.channel.send(embed=embed_message, delete_after=DELETE_WARN)
     else:
-        await message.channel.send(f"Realizada remoção de **{name}** de **{event}**.")
+        embed_message = message.embeds[0]
+        embed_dict = embed_message.to_dict()
+        edited_text = embed_dict['fields'][0]['value']
+        if edited_text == "-":
+            edited_text = ""
+        edited_text += f"\n{name}"
+        embed_dict['fields'][0]['value'] = edited_text
+        await message.edit(embed=Embed.from_dict(embed_dict))
+
+async def remove_event(message, event):
+    # colocar novo campo criador do evento
+    # checar se tem permissão para deletar
+    result = database.delete_event(event)
+    if result == False:
+        description = f"Não foi possível remover o evento."
+        embed_message = Embed(title="Aviso", description=description, color=RED)
+        await message.channel.send(embed=embed_message, delete_after=DELETE_WARN)
+    else:
+        description = f"Evento removido com sucesso."
+        embed_message = Embed(title="Excluir evento", description=description, color=YELLOW)
+        await message.channel.send(embed=embed_message, delete_after=DELETE_WARN)
