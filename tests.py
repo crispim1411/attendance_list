@@ -88,6 +88,14 @@ def test_insert_user():
     result = database.insert_user(user_name2, user_mention2, event_name2)
     assert result == False
 
+
+def test_count_event_users():
+    # conta quantos usuarios no evento 1
+    num_users = database.count_event_users(event_name)
+    assert num_users == 3
+    num_users2 = database.count_event_users(event_name2)
+    assert num_users2 == 1
+
 def test_delete_user():
     # checa se existe no evento 1
     users = database.find_event_users(event_name)
@@ -127,3 +135,4 @@ def test_delete_event():
     assert database.find_user(user_mention) == []
     assert database.find_user(user_mention2) == []
     assert database.find_user(user_mention3) == []
+

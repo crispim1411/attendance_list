@@ -146,3 +146,15 @@ def delete_user(user_mention, event_name, connection=None):
     finally:
         connection.close()
     
+@connect_to_database
+def count_event_users(event_name, connection=None):
+    try:
+        with connection, connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT COUNT(U.id) FROM users U
+                INNER JOIN events E ON E.id = U.event_id
+                WHERE E.name LIKE %s
+                """, (event_name,))
+            return cursor.fetchone()[0] 
+    finally:
+        connection.close()
