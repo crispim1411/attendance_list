@@ -11,7 +11,7 @@ except:
 CHECK = '\U00002705'
 CROSS = '\U0000274c'
 # Tempo auto delete
-DELETE_WARN = 60
+DELETE_WARN = 30
 DELETE_CALL = 120
 DELETE_HELP = 300
 # Cores
@@ -21,6 +21,7 @@ BLUE = 0x538fdf
 GREEN = 0x6dc22c
 # Mensagens
 LOADING = "carregando..."
+
 
 async def process_data(message):
     itens = message.content.split(' ')
@@ -179,7 +180,7 @@ async def process_data(message):
             if evento:
                 description = f"Interaja aqui para retirar seu nome da lista de **{content}**"
                 embed_message = Embed(title=f"Remover inscrição", description=description, color=YELLOW)
-                embed_message.add_field(name="Removidos", value="-", sinline=False)
+                embed_message.add_field(name="Removidos", value="-", inline=False)
                 msg = await message.channel.send(embed=embed_message)
                 await msg.add_reaction(CROSS)
             else:
