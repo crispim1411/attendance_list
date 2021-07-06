@@ -66,7 +66,7 @@ async def process_data(message):
                     description = items[0] + f"{event[1]}\n" + LOADING
 
                 num_users = database.count_event_users(event[1])
-                counter_text += f"""{num_users}\n"""
+                counter_text += f"{num_users}\n"
                 embed_dict['fields'][0]['value'] = description
                 embed_dict['fields'][1]['value'] = counter_text
                 await msg.edit(embed=Embed.from_dict(embed_dict))
@@ -78,7 +78,7 @@ async def process_data(message):
         else:
             description = "Comando incorreto. Use #help para ver os comandos."
             await message.channel.send(
-                embed  =Embed(title="Aviso", description=description, color=RED), 
+                embed = Embed(title="Aviso", description=description, color=RED), 
                 delete_after = DELETE_ERROR)
 
     else:
