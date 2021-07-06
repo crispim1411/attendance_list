@@ -30,16 +30,16 @@ def connect_to_database(func):
 
 
 @connect_to_database
-def insert_event(name, connection=None):
+def insert_event(name, creator, connection=None):
     event = find_event(name)
     if event:
         return False
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute("""
-                INSERT INTO events(name)
-                VALUES (%s)
-                """, (name,))
+                INSERT INTO events(name, creator)
+                VALUES (%s, %s)
+                """, (name, creator,))
             return True
     finally:
         connection.close()
@@ -112,10 +112,13 @@ def find_event_users(event_name, connection=None):
         connection.close()
 
 @connect_to_database
-def delete_event(event_name, connection=None):
+def delete_event(event_name, user_mention, connection=None):
     event = find_event(event_name) 
     if not event:
         return False
+    elif event[2] != user_mention:
+        return False
+
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute("""

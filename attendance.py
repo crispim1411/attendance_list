@@ -85,7 +85,7 @@ async def process_data(message):
         content = ' '.join(itens[1:])
 
         if message.content.startswith(config['PREFIX'] + 'criar '):
-            result = database.insert_event(content)
+            result = database.insert_event(content, message.author.mention)
             if result == False:
                 description = "Este evento já está cadastrado."
                 await message.channel.send(
@@ -254,10 +254,8 @@ async def remove_from_event(message, name, mention, event):
         embed_dict['fields'][0]['value'] = edited_text
         await message.edit(embed=Embed.from_dict(embed_dict))
 
-async def remove_event(message, event):
-    # colocar novo campo criador do evento
-    # checar se tem permissão para deletar
-    result = database.delete_event(event)
+async def remove_event(message, user, event):
+    result = database.delete_event(event, user)
     if result == False:
         description = "Não foi possível remover o evento"
         await message.channel.send(

@@ -31,16 +31,16 @@ async def on_reaction_add(reaction, user):
         embed_description = reaction.message.embeds[0].description
         itens = embed_description.split('**')
     message = reaction.message
-    reaction = str(reaction).encode('unicode-escape')
+    str_reaction = str(reaction).encode('unicode-escape')
     if len(itens) > 1:
         current_event = itens[1]
 
         if config['BOT'] not in str(user):
-            if reaction == attendance.CHECK.encode('unicode-escape'):
+            if str_reaction == attendance.CHECK.encode('unicode-escape'):
                 await attendance.insert_to_event(message, user.name, user.mention, current_event)
-            elif reaction == attendance.CROSS.encode('unicode-escape'):
+            elif str_reaction == attendance.CROSS.encode('unicode-escape'):
                 if message.embeds[0].title == "Excluir evento":
-                    await attendance.remove_event(message, current_event)
+                    await attendance.remove_event(message, user.mention, current_event)
                 else:
                     await attendance.remove_from_event(message, user.name, user.mention, current_event)
             

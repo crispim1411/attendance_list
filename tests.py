@@ -27,21 +27,21 @@ def test_find_inexistent_event():
 
 def test_insert_event():
     # tenta criar evento 1
-    result = database.insert_event(event_name)
+    result = database.insert_event(event_name, user_mention)
     assert result != False
     # checa se evento foi criado
     event = database.find_event(event_name)
     assert event[1] == event_name
     # Checando unicidade da inserção
-    result = database.insert_event(event_name)
+    result = database.insert_event(event_name, user_mention)
     assert result == False
 
     #repete para event_name2
-    result2 = database.insert_event(event_name2)
+    result2 = database.insert_event(event_name2, user_mention)
     assert result2 != False
     event2 = database.find_event(event_name2)
     assert event2[1] == event_name2
-    result2 = database.insert_event(event_name2)
+    result2 = database.insert_event(event_name2, user_mention)
     assert result2 == False
     
 def test_insert_user():
@@ -88,7 +88,6 @@ def test_insert_user():
     result = database.insert_user(user_name2, user_mention2, event_name2)
     assert result == False
 
-
 def test_count_event_users():
     # conta quantos usuarios no evento 1
     num_users = database.count_event_users(event_name)
@@ -115,8 +114,11 @@ def test_delete_event():
     event = database.find_event(event_name)
     event_id = event[0]
     assert event != None
+    # tenta deletar com outro usuario
+    result = database.delete_event(event_name, user_mention2)
+    assert result == False
     # deleta o evento
-    result = database.delete_event(event_name)
+    result = database.delete_event(event_name, user_mention)
     assert result != False
     # checa se o evento foi apagado
     event = database.find_event(event_name)
@@ -126,7 +128,9 @@ def test_delete_event():
     event = database.find_event(event_name2)
     event_id = event[0]
     assert event != None
-    result = database.delete_event(event_name2)
+    result = database.delete_event(event_name, user_mention2)
+    assert result == False
+    result = database.delete_event(event_name2, user_mention)
     assert result != False
     event = database.find_event(event_name2)
     assert event == None
