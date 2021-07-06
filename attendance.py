@@ -14,8 +14,6 @@ WARN  = '\U000026A0'
 # Tempo auto delete
 DELETE_ERROR = 30
 DELETE_WARN  = 60
-DELETE_CALL  = 300
-DELETE_HELP  = 300
 # Cores
 RED     = 0xf83629
 YELLOW  = 0xe7f337
@@ -40,7 +38,7 @@ async def process_data(message):
         embed_message.set_footer(
             text="CRISPY CORPORATIONS", 
             icon_url="https://static.wikia.nocookie.net/digimon-adventure5140/images/f/fd/Digivice_tri.png/revision/latest?cb=20170328025147")
-        await message.channel.send(embed = embed_message, delete_after = DELETE_HELP)
+        await message.channel.send(embed = embed_message)
         return
 
     if len(itens) == 1:
@@ -125,7 +123,7 @@ async def process_data(message):
             users = database.find_event_users(content)
             description = LOADING
             embed_message = Embed(title=f"Chamada {content}", description=description, color=YELLOW)
-            msg = await message.channel.send(embed=embed_message, delete_after=DELETE_CALL)
+            msg = await message.channel.send(embed=embed_message)
             if len(users) == 0:
                 embed_message.description = "- Não há inscritos -"
                 await msg.edit(embed=embed_message)
@@ -155,7 +153,7 @@ async def process_data(message):
             users = database.find_event_users(content)
             description = LOADING
             embed_message = Embed(title=f"Listagem {content}", description=description, color=YELLOW)
-            msg = await message.channel.send(embed=embed_message, delete_after=DELETE_CALL)
+            msg = await message.channel.send(embed=embed_message)
             if len(users) == 0:
                 embed_message.description = "- Não há inscritos -"
                 await msg.edit(embed=embed_message)
