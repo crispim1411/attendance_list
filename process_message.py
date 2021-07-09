@@ -1,5 +1,4 @@
 # imports do projeto
-import database
 import send_message
 from config import config
 
@@ -27,7 +26,7 @@ async def process_data(message):
             await send_message.subscribe(message, content)
 
         elif message.content.startswith(config['PREFIX'] + 'chamada '):
-            await send_message.call(message, content)
+            await send_message.call_users(message, content)
 
         elif message.content.startswith(config['PREFIX'] + 'listar '):
             await send_message.list_users(message, content)

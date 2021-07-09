@@ -45,8 +45,8 @@ async def on_reaction_add(reaction, user):
 
             elif str_reaction == config['CROSS'].encode('unicode-escape'):
                 if message.embeds[0].title == "Excluir evento":
-                    await send_message.remove_response(message, user.mention, current_event)
+                    await send_message.remove_event_response(message, user.mention, current_event)
                 else:
-                    await send_message.remove_from_event(message, user.name, user.mention, current_event)
+                    await send_message.remove_subscription_reponse(message, user.name, user.mention, current_event)
             
 client.run(TOKEN)
