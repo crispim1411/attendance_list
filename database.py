@@ -1,11 +1,12 @@
-import os
 import psycopg2
 from urllib.parse import urlparse
 
 try:
-    DATABASE_URL = os.environ['DATABASE_URL']
+    import credentials
+    DATABASE_URL = credentials.DATABASE_URL
 except:
-    from config import DATABASE_URL
+    import os
+    DATABASE_URL = os.environ['DATABASE_URL']
 
 def connect():
     try:

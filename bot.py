@@ -1,13 +1,16 @@
-import os
 import asyncio 
 import discord
 from discord.ext import commands
-
+# imports do projeto 
 import attendance
+import send_message
+from config import config
 try:
-    from config import config
+    import credentials
+    TOKEN = credentials.TOKEN
 except:
-    config = os.environ
+    import os
+    credentials = os.environ['TOKEN']
 
 client = commands.Bot(command_prefix = config['PREFIX'])
             
@@ -25,23 +28,25 @@ async def on_message(message):
 
 @client.event
 async def on_reaction_add(reaction, user):
-    if len(reaction.message.embeds) == 0:
-        itens = reaction.message.content.split('**')
-    else:
+    if len(reaction.message.embeds) == 1: #unico não embed é #chamada
         embed_description = reaction.message.embeds[0].description
         itens = embed_description.split('**')
+    else:
+        return
+
     message = reaction.message
     str_reaction = str(reaction).encode('unicode-escape')
     if len(itens) > 1:
         current_event = itens[1]
 
         if config['BOT'] not in str(user):
-            if str_reaction == attendance.CHECK.encode('unicode-escape'):
-                await attendance.insert_to_event(message, user.name, user.mention, current_event)
-            elif str_reaction == attendance.CROSS.encode('unicode-escape'):
+            if str_reaction == config['CHECK'].encode('unicode-escape'):
+                await send_message.insert_user(message, user.name, user.mention, current_event)
+
+            elif str_reaction == config['CROSS'].encode('unicode-escape'):
                 if message.embeds[0].title == "Excluir evento":
-                    await attendance.remove_event(message, user.mention, current_event)
+                    await send_message.remove_response(message, user.mention, current_event)
                 else:
-                    await attendance.remove_from_event(message, user.name, user.mention, current_event)
+                    await send_message.remove_from_event(message, user.name, user.mention, current_event)
             
-client.run(config['TOKEN'])
+client.run(TOKEN)
