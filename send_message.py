@@ -61,10 +61,7 @@ async def subscribe(message, content):
 
 async def insert_user(message, name, mention, event):
     if database.find_event(event) == None:
-        description = "Este evento não está cadastrado"
-        await message.channel.send(
-            embed = Embed(title="Aviso", description=description, color=RED), 
-            delete_after = DELETE_ERROR)
+        await inexistent_event(message)
         return
 
     result = database.insert_user(name, mention, event)
@@ -118,10 +115,7 @@ async def list_events(message):
 
 async def list_users(message, content):
     if database.find_event(content) == None:
-        description = "Este evento não está cadastrado"
-        await message.channel.send(
-            embed = Embed(title="Aviso", description=description, color=RED), 
-            delete_after = DELETE_ERROR)
+        await inexistent_event(message)
         return
 
     users = database.find_event_users(content)
@@ -192,10 +186,7 @@ async def remove_subscription(message, content):
 
 async def remove_subscription_reponse(message, name, mention, event):
     if database.find_event(event) == None:
-        description = "Este evento não está cadastrado"
-        await message.channel.send(
-            embed = Embed(title="Aviso", description=description, color=RED),
-            delete_after = DELETE_ERROR)
+        await inexistent_event(message)
         return
 
     result = database.delete_user(mention, event)
@@ -243,6 +234,12 @@ async def remove_event_response(message, user, event):
 
 async def incorrect_command(message):
     description = "Comando incorreto. Use #help para ver os comandos."
+    await message.channel.send(
+        embed = Embed(title="Aviso", description=description, color=RED), 
+        delete_after = DELETE_ERROR)
+
+async def inexistent_event(message):
+    description = "Este evento não está cadastrado"
     await message.channel.send(
         embed = Embed(title="Aviso", description=description, color=RED), 
         delete_after = DELETE_ERROR)

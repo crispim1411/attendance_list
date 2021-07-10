@@ -113,6 +113,18 @@ def find_event_users(event_name, connection=None):
         connection.close()
 
 @connect_to_database
+def rename_event(event_name, new_name, connection=None):
+    event = find_event(event_name) 
+    try:
+        with connection, connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE events 
+                SET name = %s
+                WHERE id = %s""", (new_name, event[0],))
+    finally:
+        connection.close()
+
+@connect_to_database
 def delete_event(event_name, user_mention, connection=None):
     event = find_event(event_name) 
     if not event:
