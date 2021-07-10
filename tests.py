@@ -94,6 +94,19 @@ def test_count_event_users():
     num_users2 = database.count_event_users(event_name2)
     assert num_users2 == 1
 
+def test_rename_event():
+    # renomeia o evento
+    new_name = "event_renamed"
+    result = database.rename_event(event_name, new_name)
+    assert result != False
+    event = database.find_event(new_name)
+    assert event[1] == new_name
+    # volta o evento pro nome original
+    result = database.rename_event(new_name, event_name)
+    assert result != False
+    event = database.find_event(event_name)
+    assert event[1] == event_name
+
 def test_delete_user():
     # checa se existe no evento 1
     users = database.find_event_users(event_name)
