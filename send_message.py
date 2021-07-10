@@ -166,7 +166,7 @@ async def call_users(message, content):
     items = msg_content.split(LOADING)
     await msg.edit(content=items[0])
 
-async def rename_event(message, content):
+async def rename_event(message, content, user_mention):
     separator = '-'
     if separator not in content:
         description = f"Por favor, separe o nome e o novo nome com o caráctere **{separator}** (hífen)"
@@ -188,7 +188,7 @@ async def rename_event(message, content):
         await inexistent_event(message)
         return
 
-    result = database.rename_event(event_name, new_event_name)
+    result = database.rename_event(user_mention, event_name, new_event_name)
     if result == False:
         description = f"Não foi possível renomear o evento."
         await message.channel.send(

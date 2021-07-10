@@ -95,14 +95,17 @@ def test_count_event_users():
     assert num_users2 == 1
 
 def test_rename_event():
-    # renomeia o evento
     new_name = "event_renamed"
-    result = database.rename_event(event_name, new_name)
+    # outro usuario tenta renomear
+    result = database.rename_event(user_mention2, event_name, new_name)
+    assert result == False
+    # renomeia o evento
+    result = database.rename_event(user_mention, event_name, new_name)
     assert result != False
     event = database.find_event(new_name)
     assert event[1] == new_name
     # volta o evento pro nome original
-    result = database.rename_event(new_name, event_name)
+    result = database.rename_event(user_mention, new_name, event_name)
     assert result != False
     event = database.find_event(event_name)
     assert event[1] == event_name

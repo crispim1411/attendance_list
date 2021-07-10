@@ -113,10 +113,12 @@ def find_event_users(event_name, connection=None):
         connection.close()
 
 @connect_to_database
-def rename_event(event_name, new_name, connection=None):
+def rename_event(user_mention, event_name, new_name, connection=None):
     event = find_event(event_name) 
     try:
         with connection, connection.cursor() as cursor:
+            if event[2] != user_mention:
+                return False
             cursor.execute("""
                 UPDATE events 
                 SET name = %s
