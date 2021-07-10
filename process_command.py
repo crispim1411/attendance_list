@@ -41,4 +41,4 @@ async def process_data(message):
             await send_message.rename_event(message, content)
 
         else:
-            await send_message.incorrect_command()
+            await send_message.incorrect_command(message)

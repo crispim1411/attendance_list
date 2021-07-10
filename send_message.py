@@ -169,16 +169,16 @@ async def call_users(message, content):
 async def rename_event(message, content):
     separator = '-'
     if separator not in content:
-        description = f"Por favor, separe o nome do evento do novo nome com o caráctere **{separator}** (hífen)"
+        description = f"Por favor, separe o nome e o novo nome com o caráctere **{separator}** (hífen)"
         await message.channel.send(
             embed = Embed(title="Aviso", description=description, color=RED), 
             delete_after = DELETE_ERROR)
         return
-
+    
     itens = content.split(separator)
     event_name = itens[0].strip()
     new_event_name = itens[1].strip()
-    if len(itens) < 2:
+    if new_event_name == '':
         description = f"Novo nome de evento inválido."
         await message.channel.send(
             embed = Embed(title="Aviso", description=description, color=RED), 
