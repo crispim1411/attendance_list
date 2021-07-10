@@ -37,5 +37,8 @@ async def process_data(message):
         elif message.content.startswith(config['PREFIX'] + 'excluir '):
             await send_message.remove_event(message, content)
 
+        elif message.content.startswith(config['PREFIX'] + 'renomear' ):
+            await send_message.rename_event(message, content)
+
         else:
             await send_message.incorrect_command()

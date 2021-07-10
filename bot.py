@@ -2,7 +2,7 @@ import asyncio
 import discord
 from discord.ext import commands
 # imports do projeto 
-import process_message
+import process_command
 import send_message
 from config import config
 try:
@@ -26,7 +26,7 @@ async def on_message(message):
         return
 
     if message.content.startswith(config['PREFIX']):
-        await process_message.process_data(message)
+        await process_command.process_data(message)
 
 @client.event
 async def on_reaction_add(reaction, user):
