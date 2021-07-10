@@ -1,8 +1,7 @@
 import random
 import string
-
+# import do projeto
 import database
-import attendance
 
 event_name = 'event_test'
 event_name2 = 'event_test2'

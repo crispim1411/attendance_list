@@ -8,9 +8,11 @@ from config import config
 try:
     import credentials
     TOKEN = credentials.TOKEN
+    BOT = credentials.BOT
 except:
     import os
-    credentials = os.environ['TOKEN']
+    TOKEN = os.environ['TOKEN']
+    BOT = os.environ['BOT']
 
 client = commands.Bot(command_prefix = config['PREFIX'])
             
@@ -39,7 +41,7 @@ async def on_reaction_add(reaction, user):
     if len(itens) > 1:
         current_event = itens[1]
 
-        if config['BOT'] not in str(user):
+        if BOT not in str(user):
             if str_reaction == config['CHECK'].encode('unicode-escape'):
                 await send_message.insert_user(message, user.name, user.mention, current_event)
 

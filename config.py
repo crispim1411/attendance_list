@@ -1,6 +1,5 @@
 config = {
     'PREFIX': "#",
-    'BOT': '#1795',
     'CHECK': '\U00002705',
     'CROSS': '\U0000274c',
     'WARN': '\U000026A0',
