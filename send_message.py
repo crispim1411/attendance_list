@@ -21,6 +21,7 @@ async def help(message):
     embed_message = Embed(title="Comandos", color=BLUE)
     embed_message.add_field(name="Listar os eventos cadastrados", value="```#listar```", inline=False)
     embed_message.add_field(name="Cadastrar um novo evento", value="```#criar <nome do evento>```", inline=False)
+    embed_message.add_field(name="Renomear evento", value="```#renomear <nome> - <novo nome>```", inline=False)
     embed_message.add_field(name="Reabrir inscrições de um evento", value="```#inscrever <nome do evento>```", inline=False)
     embed_message.add_field(name="Listar os inscritos de um evento", value="```#listar <nome do evento>```", inline=False)
     embed_message.add_field(name="Realizar chamada de um evento", value="```#chamada <nome do evento>```", inline=False)
@@ -153,18 +154,12 @@ async def call_users(message, content):
             delete_after = DELETE_WARN)
         return
 
-    msg_content = LOADING
-    msg = await message.channel.send(msg_content)
+    loading_msg = await message.channel.send(LOADING)
     for i, user in enumerate(users, start=1):
-        if msg_content == LOADING:
-            msg_content = f"{i}) {user[2]}\n" + LOADING
-        else:
-            items = msg_content.split(LOADING)
-            msg_content = items[0] + f"{i}) {user[2]}\n" + LOADING
-        await msg.edit(content=msg_content)
-
-    items = msg_content.split(LOADING)
-    await msg.edit(content=items[0])
+        await message.channel.send(f"{i}) {user[2]}")
+        await loading_msg.delete()
+        loading_msg = await message.channel.send(LOADING)
+    await loading_msg.delete()
 
 async def rename_event(message, content, user_mention):
     separator = '-'
