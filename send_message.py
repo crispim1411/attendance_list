@@ -115,13 +115,15 @@ async def list_events(message):
     await msg.edit(embed=Embed.from_dict(embed_dict))
 
 async def list_users(message, content):
-    if database.find_event(content) == None:
+    event = database.find_event(content)
+    if event == None:
         await inexistent_event(message)
         return
 
     users = database.find_event_users(content)
     description = LOADING
     embed_message = Embed(title=f"Listagem {content}", description=description, color=YELLOW)
+    embed_message.add_field(name=f"Criado por: ", value=f"{event[2]}", inline=False)
     msg = await message.channel.send(embed=embed_message)
     if len(users) == 0:
         embed_message.description = "- Não há inscritos -"
