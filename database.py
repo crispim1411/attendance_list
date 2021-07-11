@@ -80,7 +80,7 @@ def find_event(name, connection):
         with connection, connection.cursor() as cursor:
             cursor.execute("""
                 SELECT * FROM events
-                WHERE name LIKE %s
+                WHERE name ILIKE %s
                 """, (name,))
             return cursor.fetchone()
     finally:
@@ -105,7 +105,7 @@ def find_event_users(event_name, connection=None):
             cursor.execute("""
                 SELECT U.* FROM users U
                 INNER JOIN events E ON E.id = U.event_id
-                WHERE E.name LIKE %s
+                WHERE E.name ILIKE %s
                 ORDER BY U.id
                 """, (event_name,))
             return cursor.fetchall()
@@ -172,7 +172,7 @@ def count_event_users(event_name, connection=None):
             cursor.execute("""
                 SELECT COUNT(U.id) FROM users U
                 INNER JOIN events E ON E.id = U.event_id
-                WHERE E.name LIKE %s
+                WHERE E.name ILIKE %s
                 """, (event_name,))
             return cursor.fetchone()[0] 
     finally:
