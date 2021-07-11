@@ -30,6 +30,9 @@ async def on_message(message):
 
 @client.event
 async def on_reaction_add(reaction, user):
+    if reaction.message.author.discriminator != BOT:
+        return
+
     if len(reaction.message.embeds) == 1: #unico não embed é #chamada
         embed_description = reaction.message.embeds[0].description
         itens = embed_description.split('**')
