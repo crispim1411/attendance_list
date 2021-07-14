@@ -157,10 +157,11 @@ async def call_users(message, content):
         return
 
     loading_msg = await message.channel.send(LOADING)
+    call_msg = ""
     for i, user in enumerate(users, start=1):
-        await message.channel.send(f"{i}) {user[2]}")
-        await loading_msg.delete()
-        loading_msg = await message.channel.send(LOADING)
+        call_msg += f"{i}) {user[2]}\n"
+        
+    await message.channel.send(call_msg)
     await loading_msg.delete()
 
 async def rename_event(message, content, user_mention):
