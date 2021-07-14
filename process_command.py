@@ -11,10 +11,8 @@ async def process_data(message):
         return
 
     if len(itens) == 1:
-        if message.content == config['PREFIX'] + 'listar':
+        if message.content == config['PREFIX'] + 'eventos':
             await send_message.list_events(message)
-        else:
-            await send_message.incorrect_command(message)
 
     else:
         content = ' '.join(itens[1:])
@@ -28,7 +26,7 @@ async def process_data(message):
         elif message.content.startswith(config['PREFIX'] + 'chamada '):
             await send_message.call_users(message, content)
 
-        elif message.content.startswith(config['PREFIX'] + 'listar '):
+        elif message.content.startswith(config['PREFIX'] + 'info '):
             await send_message.list_users(message, content)
 
         elif message.content.startswith(config['PREFIX'] + 'sair '):
@@ -39,6 +37,3 @@ async def process_data(message):
 
         elif message.content.startswith(config['PREFIX'] + 'renomear' ):
             await send_message.rename_event(message, content, message.author.mention)
-
-        else:
-            await send_message.incorrect_command(message)

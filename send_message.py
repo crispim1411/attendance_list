@@ -19,14 +19,22 @@ except:
 
 async def help(message):
     embed_message = Embed(title="Comandos", color=BLUE)
-    embed_message.add_field(name="Listar os eventos cadastrados", value="```#listar```", inline=False)
-    embed_message.add_field(name="Cadastrar um novo evento", value="```#criar <nome do evento>```", inline=False)
-    embed_message.add_field(name="Renomear evento", value="```#renomear <nome> - <novo nome>```", inline=False)
-    embed_message.add_field(name="Reabrir inscrições de um evento", value="```#inscrever <nome do evento>```", inline=False)
-    embed_message.add_field(name="Listar os inscritos de um evento", value="```#listar <nome do evento>```", inline=False)
-    embed_message.add_field(name="Realizar chamada de um evento", value="```#chamada <nome do evento>```", inline=False)
-    embed_message.add_field(name="Cancelar inscrição em um evento", value="```#sair <nome do evento>```", inline=False)
-    embed_message.add_field(name="Excluir um evento", value="```#excluir <nome do evento>```", inline=False)
+    embed_message.add_field(name="Listar os eventos cadastrados", 
+        value=f"```{config['PREFIX']}eventos```", inline=False)
+    embed_message.add_field(name="Cadastrar um novo evento", 
+        value=f"```*criar <nome do evento>```", inline=False)
+    embed_message.add_field(name="Renomear evento", 
+        value=f"```{config['PREFIX']}renomear <nome> - <novo nome>```", inline=False)
+    embed_message.add_field(name="Reabrir inscrições de um evento", 
+        value=f"```{config['PREFIX']}inscrever <nome do evento>```", inline=False)
+    embed_message.add_field(name="Listar os inscritos de um evento", 
+        value=f"```{config['PREFIX']}info <nome do evento>```", inline=False)
+    embed_message.add_field(name="Realizar chamada de um evento", 
+        value=f"```{config['PREFIX']}chamada <nome do evento>```", inline=False)
+    embed_message.add_field(name="Cancelar inscrição em um evento", 
+        value=f"```{config['PREFIX']}sair <nome do evento>```", inline=False)
+    embed_message.add_field(name="Excluir um evento", 
+        value=f"```{config['PREFIX']}excluir <nome do evento>```", inline=False)
     embed_message.set_footer(
         text="CRISPY CORPORATIONS", 
         icon_url=config['ICON_URL'])
@@ -256,12 +264,6 @@ async def remove_event_response(message, user, event):
         await message.channel.send(
             embed = Embed(title=f"Excluir evento {config['CHECK']}", description=description, color=GREEN), 
             delete_after = DELETE_WARN)
-
-async def incorrect_command(message):
-    description = "Comando incorreto. Use #help para ver os comandos."
-    await message.channel.send(
-        embed = Embed(title="Aviso", description=description, color=RED), 
-        delete_after = DELETE_ERROR)
 
 async def inexistent_event(message):
     description = "Este evento não está cadastrado"
