@@ -1,5 +1,5 @@
 config = {
-    'PREFIX': "#",
+    'PREFIX': "*",
     'CHECK': '\U00002705',
     'CROSS': '\U0000274c',
     'WARN': '\U000026A0',
