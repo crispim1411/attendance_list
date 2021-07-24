@@ -36,6 +36,8 @@ async def help(message):
         value=f"```{config['PREFIX']}sair <nome do evento>```", inline=False)
     embed_message.add_field(name="Excluir um evento", 
         value=f"```{config['PREFIX']}excluir <nome do evento>```", inline=False)
+    embed_message.add_field(name="Código do bot", 
+        value=f"```{config['PREFIX']}source```", inline=False)
     embed_message.set_footer(
         text="CRISPY CORPORATIONS", 
         icon_url=config['ICON_URL'])
@@ -215,8 +217,9 @@ async def remove_subscription(message, content):
         description = f"Interaja aqui para retirar seu nome da lista de **{content}**"
         embed_message = Embed(title=f"Remover inscrição", description=description, color=YELLOW)
         embed_message.add_field(name="Removidos", value="-", inline=False)
-        msg = await message.channel.send(embed=embed_message)
-        await msg.add_reaction(config['CROSS'])
+        msg = await message.channel.send(
+            embed = embed_message,
+            components = [Button(style=ButtonStyle.red, label='Sair', custom_id='exit')])
     else:
         description = "Este evento não está cadastrado"
         await message.channel.send(
@@ -250,10 +253,10 @@ async def remove_event(message, content):
         return
     
     description = f"{config['WARN']}Atenção{config['WARN']}\nAo confirmar **{content}** será deletado"
-    msg = await message.channel.send(
+    await message.channel.send(
         embed = Embed(title="Excluir evento", description=description, color=YELLOW),
+        components = [Button(style=ButtonStyle.red, label='Excluir', custom_id='delete')],
         delete_after = DELETE_WARN)
-    await msg.add_reaction(config['CROSS'])
 
 async def remove_event_response(message, user, event):
     result = database.delete_event(event, user)
@@ -273,3 +276,15 @@ async def inexistent_event(message):
     await message.channel.send(
         embed = Embed(title="Aviso", description=description, color=RED), 
         delete_after = DELETE_ERROR)
+
+async def source_link(message):
+    description = """O código do Bot de Lista de Chamada é aberto a todos.
+        Clique no ícone de url para ser redirecionado.
+        O conhecimento não deve nunca ser privado!"""
+    embed_message = Embed(title="Código do bot", description=description, color=BLUE)
+    embed_message.set_footer(
+        text="Beijos de tio Crispim", 
+        icon_url=config['ICON_URL'])
+    await message.channel.send(
+        embed = embed_message,
+        components = [Button(style=ButtonStyle.URL, label='url', url='https://github.com/crispim1411/attendance_list')])

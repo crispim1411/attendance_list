@@ -14,6 +14,9 @@ async def process_data(message):
         if message.content == config['PREFIX'] + 'eventos':
             await send_message.list_events(message)
 
+        elif message.content.startswith(config['PREFIX'] + 'source'):
+            await send_message.source_link(message)
+
     else:
         content = ' '.join(itens[1:])
 
@@ -37,3 +40,4 @@ async def process_data(message):
 
         elif message.content.startswith(config['PREFIX'] + 'renomear' ):
             await send_message.rename_event(message, content, message.author.mention)
+        

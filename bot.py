@@ -1,5 +1,6 @@
 from discord.ext import commands
 from discord_components import DiscordComponents
+from discord_components.interaction import InteractionType
 
 # imports do projeto 
 import process_command
@@ -53,13 +54,23 @@ async def on_reaction_add(reaction, user):
 
 @client.event
 async def on_button_click(interaction):
+    message = interaction.message
+    user = interaction.author
+    mention = f'<@!{user.id}>'
     action = interaction.component.custom_id
+    content = interaction.raw_data['d']['message']['embeds'][0]['description']
+    current_event = content.split('**')[1]
+    
     if action == 'subscribe':
-        user = interaction.author
-        content = interaction.raw_data['d']['message']['embeds'][0]['description']
-        current_event = content.split('**')[1]
-        await interaction.respond(content="Inscrição enviada")
-        await send_message.insert_user(interaction.message, user.name, user.mention, current_event)
+        await interaction.respond(type=InteractionType.UpdateMessage)
+        await send_message.insert_user(message, user.name, mention, current_event)
 
+    elif action == 'exit':
+        await interaction.respond(type=InteractionType.UpdateMessage)
+        await send_message.remove_subscription_reponse(message, user.name, mention, current_event)
+
+    elif action == 'delete':
+        await interaction.respond(type=InteractionType.UpdateMessage)
+        await send_message.remove_event_response(message, mention, current_event)
             
 client.run(TOKEN)
