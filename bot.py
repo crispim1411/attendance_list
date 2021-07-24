@@ -58,7 +58,7 @@ async def on_button_click(interaction):
         user = interaction.author
         content = interaction.raw_data['d']['message']['embeds'][0]['description']
         current_event = content.split('**')[1]
-        await interaction.respond(content="Inscrição enviada.")
+        await interaction.respond(content="Inscrição enviada")
         await send_message.insert_user(interaction.message, user.name, user.mention, current_event)
 
             
