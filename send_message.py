@@ -11,6 +11,7 @@ LOADING = "carregando..."
 
 import os
 from discord import Embed
+from discord_components import Button, ButtonStyle
 import database
 try:
     from config import config
@@ -51,8 +52,9 @@ async def new_event(message, content):
         description = f"Interaja aqui para se inscrever na lista de **{content}**"
         embed_message = Embed(title="Novo evento", description=description, color=YELLOW)
         embed_message.add_field(name="Inscritos", value="-", inline=False)
-        msg = await message.channel.send(embed=embed_message)
-        await msg.add_reaction(config['CHECK'])
+        msg = await message.channel.send(
+            embed = embed_message, 
+            components = [Button(style=ButtonStyle.green, label='Inscrição', custom_id='subscribe')])
 
 async def subscribe(message, content):
     event = database.find_event(content)

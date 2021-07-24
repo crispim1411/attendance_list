@@ -1,6 +1,6 @@
-import asyncio 
-import discord
 from discord.ext import commands
+from discord_components import DiscordComponents
+
 # imports do projeto 
 import process_command
 import send_message
@@ -16,6 +16,7 @@ client = commands.Bot(command_prefix = config['PREFIX'])
             
 @client.event
 async def on_ready():
+    DiscordComponents(client)
     print('We have logged in as {0.user}'.format(client))
 
 @client.event
@@ -44,13 +45,21 @@ async def on_reaction_add(reaction, user):
     if len(itens) > 1:
         current_event = itens[1]
 
-        if str_reaction == config['CHECK'].encode('unicode-escape'):
-            await send_message.insert_user(message, user.name, user.mention, current_event)
-
-        elif str_reaction == config['CROSS'].encode('unicode-escape'):
+        if str_reaction == config['CROSS'].encode('unicode-escape'):
             if message.embeds[0].title == "Excluir evento":
                 await send_message.remove_event_response(message, user.mention, current_event)
             else:
                 await send_message.remove_subscription_reponse(message, user.name, user.mention, current_event)
+
+@client.event
+async def on_button_click(interaction):
+    action = interaction.component.custom_id
+    if action == 'subscribe':
+        user = interaction.author
+        content = interaction.raw_data['d']['message']['embeds'][0]['description']
+        current_event = content.split('**')[1]
+        await interaction.respond(content="Inscrição enviada.")
+        await send_message.insert_user(interaction.message, user.name, user.mention, current_event)
+
             
 client.run(TOKEN)
