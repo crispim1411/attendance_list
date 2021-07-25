@@ -12,6 +12,7 @@ LOADING = "carregando..."
 import os
 from discord import Embed
 from discord_components import Button, ButtonStyle
+from discord_components.component import Select, SelectOption
 import database
 try:
     from config import config
@@ -155,6 +156,54 @@ async def list_users(message, content):
     items = description.split(LOADING)
     embed_message.description = items[0]
     await msg.edit(embed=embed_message)
+
+async def call_select(message):
+    events = database.find_all_events()
+    if len(events) == 0:
+        description = "- Não há eventos cadastrados -"
+        embed_message = Embed(title=f"Eventos cadastrados", description=description, color=YELLOW)
+        await message.channel.send(embed=embed_message)
+        return
+
+    options = []
+    for e in events:
+        options.append(
+            SelectOption(
+                label = e[1][:24],
+                value = e[1]
+            )
+        )
+    await message.channel.send("Chamada",
+        components = [
+            Select(
+                placeholder = "Selecione o evento",
+                options = options,
+                custom_id = 'call'
+            )])
+
+async def info_select(message):
+    events = database.find_all_events()
+    if len(events) == 0:
+        description = "- Não há eventos cadastrados -"
+        embed_message = Embed(title=f"Eventos cadastrados", description=description, color=YELLOW)
+        await message.channel.send(embed=embed_message)
+        return
+
+    options = []
+    for e in events:
+        options.append(
+            SelectOption(
+                label = e[1][:24],
+                value = e[1]
+            )
+        )
+    await message.channel.send("Info",
+        components = [
+            Select(
+                placeholder = "Selecione o evento",
+                options = options,
+                custom_id = 'info'
+            )])
 
 async def call_users(message, content):
     if database.find_event(content) == None:

@@ -14,8 +14,15 @@ async def process_data(message):
         if message.content == config['PREFIX'] + 'eventos':
             await send_message.list_events(message)
 
-        elif message.content.startswith(config['PREFIX'] + 'source'):
+        elif message.content == config['PREFIX'] + 'chamada':
+            await send_message.call_select(message)
+
+        elif message.content == config['PREFIX'] + 'info':
+            await send_message.info_select(message)
+
+        elif message.content == config['PREFIX'] + 'source':
             await send_message.source_link(message)
+        
 
     else:
         content = ' '.join(itens[1:])

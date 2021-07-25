@@ -54,23 +54,35 @@ async def on_reaction_add(reaction, user):
 
 @client.event
 async def on_button_click(interaction):
-    message = interaction.message
     user = interaction.author
     mention = f'<@!{user.id}>'
+    message = interaction.message
     action = interaction.component.custom_id
     content = interaction.raw_data['d']['message']['embeds'][0]['description']
     current_event = content.split('**')[1]
+
+    await interaction.respond(type=InteractionType.UpdateMessage)
     
     if action == 'subscribe':
-        await interaction.respond(type=InteractionType.UpdateMessage)
         await send_message.insert_user(message, user.name, mention, current_event)
 
     elif action == 'exit':
-        await interaction.respond(type=InteractionType.UpdateMessage)
         await send_message.remove_subscription_reponse(message, user.name, mention, current_event)
 
     elif action == 'delete':
-        await interaction.respond(type=InteractionType.UpdateMessage)
         await send_message.remove_event_response(message, mention, current_event)
-            
+
+@client.event
+async def on_select_option(interaction):
+    item = interaction.component[0].value
+    message = interaction.message
+    action = interaction.custom_id
+
+    await interaction.respond(type=InteractionType.UpdateMessage)
+
+    if action == 'call':
+        await send_message.call_users(message, item)
+    elif action == 'info':
+        await send_message.list_users(message, item)
+
 client.run(TOKEN)
