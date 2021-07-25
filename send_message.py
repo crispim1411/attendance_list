@@ -206,7 +206,8 @@ async def info_select(message):
             )])
 
 async def call_users(message, content):
-    if database.find_event(content) == None:
+    event = database.find_event(content)
+    if event == None:
         await inexistent_event(message)
         return
 
@@ -219,7 +220,7 @@ async def call_users(message, content):
         return
 
     loading_msg = await message.channel.send(LOADING)
-    call_msg = ""
+    call_msg = f"{event[1]}\n"
     for i, user in enumerate(users, start=1):
         call_msg += f"{i}) {user[2]}\n"
         
