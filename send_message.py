@@ -315,4 +315,4 @@ async def source_link(message):
         icon_url=config['ICON_URL'])
     await message.channel.send(
         embed = embed_message,
-        components = [Button(style=ButtonStyle.URL, label='url', url='https://github.com/crispim1411/attendance_list')])
+        components = [Button(style=ButtonStyle.URL, label='url', url=config['GITHUB'])])
