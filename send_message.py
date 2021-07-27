@@ -69,10 +69,7 @@ async def subscribe(message, content):
             embed = embed_message,
             components = [Button(style=ButtonStyle.green, label='Inscrição', custom_id='subscribe')])
     else:
-        description = "Este evento não está cadastrado"
-        await message.channel.send(
-            embed = Embed(title="Aviso", description=description, color=RED), 
-            delete_after = DELETE_ERROR)
+        await inexistent_event(message)
 
 async def insert_user(message, name, mention, event):
     if database.find_event(event) == None:
@@ -223,10 +220,7 @@ async def remove_subscription(message, content):
             embed = embed_message,
             components = [Button(style=ButtonStyle.red, label='Sair', custom_id='exit')])
     else:
-        description = "Este evento não está cadastrado"
-        await message.channel.send(
-            embed = Embed(title="Aviso", description=description, color=RED), 
-            delete_after = DELETE_ERROR)
+        await inexistent_event(message)
 
 async def remove_subscription_reponse(message, name, mention, event):
     if database.find_event(event) == None:
