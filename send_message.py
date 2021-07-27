@@ -21,22 +21,22 @@ except:
 
 async def help(message):
     embed_message = Embed(title="Comandos", color=BLUE)
-    embed_message.add_field(name="Listar os eventos cadastrados", 
-        value=f"```{config['PREFIX']}eventos```", inline=False)
     embed_message.add_field(name="Cadastrar um novo evento", 
         value=f"```*criar <nome do evento>```", inline=False)
-    embed_message.add_field(name="Renomear evento", 
-        value=f"```{config['PREFIX']}renomear <nome> - <novo nome>```", inline=False)
-    embed_message.add_field(name="Reabrir inscrições de um evento", 
-        value=f"```{config['PREFIX']}inscrever <nome do evento>```", inline=False)
-    embed_message.add_field(name="Listar os inscritos de um evento", 
-        value=f"```{config['PREFIX']}info <nome do evento>```", inline=False)
-    embed_message.add_field(name="Realizar chamada de um evento", 
-        value=f"```{config['PREFIX']}chamada <nome do evento>```", inline=False)
-    embed_message.add_field(name="Cancelar inscrição em um evento", 
-        value=f"```{config['PREFIX']}sair <nome do evento>```", inline=False)
     embed_message.add_field(name="Excluir um evento", 
         value=f"```{config['PREFIX']}excluir <nome do evento>```", inline=False)
+    embed_message.add_field(name="Renomear evento", 
+        value=f"```{config['PREFIX']}renomear <nome> - <novo nome>```", inline=False)
+    embed_message.add_field(name="Listar os eventos cadastrados", 
+        value=f"```{config['PREFIX']}eventos```", inline=False)
+    embed_message.add_field(name="Listar os inscritos de um evento", 
+        value=f"```{config['PREFIX']}info```", inline=False)
+    embed_message.add_field(name="Realizar chamada de um evento", 
+        value=f"```{config['PREFIX']}chamada```", inline=False)
+    embed_message.add_field(name="Reabrir inscrições de um evento", 
+        value=f"```{config['PREFIX']}inscrever```", inline=False)
+    embed_message.add_field(name="Cancelar inscrição em um evento", 
+        value=f"```{config['PREFIX']}sair```", inline=False)
     embed_message.add_field(name="Código do bot", 
         value=f"```{config['PREFIX']}source```", inline=False)
     embed_message.set_footer(
@@ -308,7 +308,7 @@ async def inexistent_event(message):
 async def source_link(message):
     description = """O código do Bot de Lista de Chamada é aberto a todos.
         Clique no ícone de url para ser redirecionado.
-        O conhecimento não deve nunca ser privado!"""
+        O conhecimento não deve nunca ser algo privado!"""
     embed_message = Embed(title="Código do bot", description=description, color=BLUE)
     embed_message.set_footer(
         text="Beijos de tio Crispim", 
