@@ -157,54 +157,6 @@ async def list_users(message, content):
     embed_message.description = items[0]
     await msg.edit(embed=embed_message)
 
-async def call_select(message):
-    events = database.find_all_events()
-    if len(events) == 0:
-        description = "- Não há eventos cadastrados -"
-        embed_message = Embed(title=f"Eventos cadastrados", description=description, color=YELLOW)
-        await message.channel.send(embed=embed_message)
-        return
-
-    options = []
-    for e in events:
-        options.append(
-            SelectOption(
-                label = e[1][:24],
-                value = e[1]
-            )
-        )
-    await message.channel.send("Chamada",
-        components = [
-            Select(
-                placeholder = "Selecione o evento",
-                options = options,
-                custom_id = 'call'
-            )])
-
-async def info_select(message):
-    events = database.find_all_events()
-    if len(events) == 0:
-        description = "- Não há eventos cadastrados -"
-        embed_message = Embed(title=f"Eventos cadastrados", description=description, color=YELLOW)
-        await message.channel.send(embed=embed_message)
-        return
-
-    options = []
-    for e in events:
-        options.append(
-            SelectOption(
-                label = e[1][:24],
-                value = e[1]
-            )
-        )
-    await message.channel.send("Info",
-        components = [
-            Select(
-                placeholder = "Selecione o evento",
-                options = options,
-                custom_id = 'info'
-            )])
-
 async def call_users(message, content):
     event = database.find_event(content)
     if event == None:
@@ -320,6 +272,32 @@ async def remove_event_response(message, user, event):
         await message.channel.send(
             embed = Embed(title=f"Excluir evento {config['CHECK']}", description=description, color=GREEN), 
             delete_after = DELETE_WARN)
+
+async def select_event_list(message, title, custom_id):
+    events = database.find_all_events()
+    if len(events) == 0:
+        description = "- Não há eventos cadastrados -"
+        embed_message = Embed(title=f"Eventos cadastrados", description=description, color=YELLOW)
+        await message.channel.send(embed=embed_message, delete_after = DELETE_WARN)
+        return
+
+    options = []
+    for e in events:
+        options.append(
+            SelectOption(
+                label = e[1][:24],
+                value = e[1]
+            )
+        )
+    await message.channel.send(title, delete_after = DELETE_WARN,
+        components = [
+            Select(
+                placeholder = "Selecione o evento",
+                options = options,
+                custom_id = custom_id
+            )
+        ]
+    )
 
 async def inexistent_event(message):
     description = "Este evento não está cadastrado"

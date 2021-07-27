@@ -79,10 +79,15 @@ async def on_select_option(interaction):
     action = interaction.custom_id
 
     await interaction.respond(type=InteractionType.UpdateMessage)
+    await interaction.message.delete()
 
-    if action == 'call':
+    if action == 'subscribe_select': 
+        await send_message.subscribe(message, item)
+    elif action == 'call_select':
         await send_message.call_users(message, item)
-    elif action == 'info':
+    elif action == 'info_select':
         await send_message.list_users(message, item)
+    elif action == 'exit_select':
+        await send_message.remove_subscription(message, item)
 
 client.run(TOKEN)
