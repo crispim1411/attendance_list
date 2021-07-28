@@ -240,7 +240,7 @@ async def remove_event(message, content):
         await inexistent_event(message)
         return
     
-    description = f"{config['WARN']}Atenção{config['WARN']}\nAo confirmar **{content}** será deletado"
+    description = f"{config['WARN']}Atenção{config['WARN']}\nAo confirmar, **{content}** será deletado"
     await message.channel.send(
         embed = Embed(title="Excluir evento", description=description, color=YELLOW),
         components = [Button(style=ButtonStyle.red, label='Excluir', custom_id='delete')],
@@ -300,7 +300,7 @@ async def type_event_name(message):
 async def source_link(message):
     description = """O código do Bot de Lista de Chamada é aberto a todos.
         Clique no ícone de url para ser redirecionado.
-        O conhecimento não deve nunca ser algo privado!"""
+        O conhecimento não deve nunca ser algo privado."""
     embed_message = Embed(title="Código do bot", description=description, color=BLUE)
     embed_message.set_footer(
         text="Beijos de tio Crispim", 
