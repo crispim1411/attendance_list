@@ -26,6 +26,12 @@ async def process_data(message):
         elif message.content == config['PREFIX'] + 'sair':
             await send_message.select_event_list(message, 'Remover inscrição', 'exit_select')
 
+        elif message.content == config['PREFIX'] + 'excluir':
+            await send_message.type_event_name(message)
+
+        elif message.content == config['PREFIX'] + 'renomear':
+            await send_message.type_event_name(message)
+
         elif message.content == config['PREFIX'] + 'source':
             await send_message.source_link(message)
         

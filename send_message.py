@@ -299,6 +299,12 @@ async def inexistent_event(message):
         embed = Embed(title="Aviso", description=description, color=RED), 
         delete_after = DELETE_ERROR)
 
+async def type_event_name(message):
+    description = "Por favor, digite o nome do evento após o comando"
+    await message.channel.send(
+        embed = Embed(title="Aviso", description=description, color=RED), 
+        delete_after = DELETE_ERROR)
+
 async def source_link(message):
     description = """O código do Bot de Lista de Chamada é aberto a todos.
         Clique no ícone de url para ser redirecionado.
