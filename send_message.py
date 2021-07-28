@@ -148,6 +148,7 @@ async def list_users(message, content):
 
 async def call_users(message, content):
     event = database.find_event(content)
+    event_name = event[1]
     if event == None:
         await inexistent_event(message)
         return
@@ -161,7 +162,7 @@ async def call_users(message, content):
         return
 
     loading_msg = await message.channel.send(LOADING)
-    call_msg = f"{event[1]}\n"
+    call_msg = f"{event_name}\n{'='*len(event_name)}\n"
     for i, user in enumerate(users, start=1):
         call_msg += f"{i}) {user[2]}\n"
         
