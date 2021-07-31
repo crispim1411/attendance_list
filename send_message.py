@@ -299,9 +299,9 @@ async def type_event_name(message):
         delete_after = DELETE_ERROR)
 
 async def source_link(message):
-    description = """O código do Bot de Lista de Chamada é aberto a todos.
-        Clique no ícone de url para ser redirecionado.
-        O conhecimento não deve nunca ser algo privado."""
+    description = "O conhecimento serve para ser compartilhado.\n" \
+        "O código do Bot de Lista de Chamada é aberto a todos.\n" \
+        "Clique no ícone de url para ser redirecionado."
     embed_message = Embed(title="Código do bot", description=description, color=BLUE)
     embed_message.set_footer(
         text="Beijos de tio Crispim", 
