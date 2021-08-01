@@ -125,7 +125,7 @@ async def list_users(message, content):
 
     users = database.find_event_users(content)
     description = LOADING
-    embed_message = Embed(title=f"Listagem {content}", description=description, color=YELLOW)
+    embed_message = Embed(title=f"{content}", description=description, color=YELLOW)
     embed_message.add_field(name=f"Criado por: ", value=f"{event[2]}", inline=False)
     msg = await message.channel.send(embed=embed_message)
     if len(users) == 0:
