@@ -34,6 +34,9 @@ async def process_data(message):
 
         elif message.content == config['PREFIX'] + 'source':
             await send_message.source_link(message)
+
+        elif message.content == config['PREFIX'] + 'ping':
+            await send_message.pong(message)
         
     else:
         content = ' '.join(itens[1:])

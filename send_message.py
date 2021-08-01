@@ -10,6 +10,7 @@ GREEN   = 0x6dc22c
 LOADING = "carregando..."
 
 import os
+from random import choice
 from discord import Embed
 from discord_components import Button, ButtonStyle
 from discord_components.component import Select, SelectOption
@@ -296,6 +297,14 @@ async def type_event_name(message):
     description = "Por favor, digite o nome do evento após o comando"
     await message.channel.send(
         embed = Embed(title="Aviso", description=description, color=RED), 
+        delete_after = DELETE_ERROR)
+
+async def pong(message):
+    pongs = ['tô aqui consagrado', 'diga campeão', 'ô amigo', 'opa', 'Êêê boi', 
+        'fala corno', 'diga gay', 'oba', 'tô aqui']
+    title = choice(pongs)
+    await message.channel.send(
+        embed = Embed(title='pong', description=title, color=BLUE), 
         delete_after = DELETE_ERROR)
 
 async def source_link(message):
