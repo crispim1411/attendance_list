@@ -299,7 +299,7 @@ async def type_event_name(message):
         embed = Embed(title="Aviso", description=description, color=RED), 
         delete_after = DELETE_ERROR)
 
-async def pong(message):
+async def ping(message):
     pongs = ['tô aqui consagrado', 'diga campeão', 'ô amigo', 'opa', 'Êêê boi', 
         'fala corno', 'diga gay', 'oba', 'tô aqui']
     title = choice(pongs)
