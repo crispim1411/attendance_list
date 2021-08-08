@@ -194,7 +194,8 @@ async def rename_event(message, content, user_mention):
 
     result = database.rename_event(user_mention, event_name, new_event_name)
     if result == False:
-        description = f"Não foi possível renomear o evento."
+        description = f"Não foi possível renomear o evento. Não se esqueça" \
+            " que apenas o criador do evento possui permissão para renomeá-lo."
         await message.channel.send(
             embed = Embed(title="Aviso", description=description, color=RED), 
             delete_after = DELETE_ERROR)
@@ -242,7 +243,8 @@ async def remove_event(message, content):
         await inexistent_event(message)
         return
     
-    description = f"{config['WARN']}Atenção{config['WARN']}\nAo confirmar, **{content}** será deletado"
+    description = f"{config['WARN']}Atenção{config['WARN']}\nAo confirmar, **{content}** será deletado.\n\n" \
+        "**Não se esqueça que apenas quem criou o evento possui permissão para excluí-lo.**"
     await message.channel.send(
         embed = Embed(title="Excluir evento", description=description, color=YELLOW),
         components = [Button(style=ButtonStyle.red, label='Excluir', custom_id='delete')],
