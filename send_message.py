@@ -122,7 +122,7 @@ async def list_all_events(message):
 
 async def list_events(message):
     description = LOADING
-    embed_message = Embed(title="Eventos cadastrados", value=description, color=YELLOW)
+    embed_message = Embed(title="Eventos cadastrados", description=description, color=YELLOW)
     msg = await message.channel.send(embed=embed_message)
     events = database.find_events_in_server(str(message.guild.id))
     if len(events) == 0:
