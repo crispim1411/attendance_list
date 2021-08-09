@@ -46,8 +46,8 @@ def insert_event(name, creator, server_id, connection=None):
         connection.close()
 
 @connect_to_database
-def insert_user(name, mention, event_name, connection=None):
-    event = find_event(event_name) 
+def insert_user(name, mention, event_name, server_id, connection=None):
+    event = find_event(event_name, server_id) 
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute(""" 
@@ -93,7 +93,7 @@ def find_event(name, server_id, connection):
             cursor.execute("""
                 SELECT * FROM events
                 WHERE name ILIKE %s AND server_id = %s
-                """, (name, server_id))
+                """, (name, server_id,))
             return cursor.fetchone()
     finally:
         connection.close()
@@ -111,22 +111,22 @@ def find_user(mention, connection=None):
         connection.close()
 
 @connect_to_database
-def find_event_users(event_name, connection=None):
+def find_event_users(event_name, server_id, connection=None):
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute("""
                 SELECT U.* FROM users U
                 INNER JOIN events E ON E.id = U.event_id
-                WHERE E.name ILIKE %s
+                WHERE E.name ILIKE %s AND E.server_id = %s
                 ORDER BY U.id
-                """, (event_name,))
+                """, (event_name, server_id,))
             return cursor.fetchall()
     finally:
         connection.close()
 
 @connect_to_database
-def rename_event(user_mention, event_name, new_name, connection=None):
-    event = find_event(event_name) 
+def rename_event(user_mention, event_name, new_name, server_id, connection=None):
+    event = find_event(event_name, server_id) 
     try:
         with connection, connection.cursor() as cursor:
             if event[2] != user_mention:
@@ -134,13 +134,14 @@ def rename_event(user_mention, event_name, new_name, connection=None):
             cursor.execute("""
                 UPDATE events 
                 SET name = %s
-                WHERE id = %s""", (new_name, event[0],))
+                WHERE id = %s AND server_id = %s""",
+                (new_name, event[0], server_id,))
     finally:
         connection.close()
 
 @connect_to_database
-def delete_event(event_name, user_mention, connection=None):
-    event = find_event(event_name) 
+def delete_event(event_name, user_mention, server_id, connection=None):
+    event = find_event(event_name, server_id) 
     if not event:
         return False
     elif event[2] != user_mention:
@@ -158,8 +159,8 @@ def delete_event(event_name, user_mention, connection=None):
         connection.close()
 
 @connect_to_database
-def delete_user(user_mention, event_name, connection=None):
-    event = find_event(event_name) 
+def delete_user(user_mention, event_name, server_id, connection=None):
+    event = find_event(event_name, server_id) 
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute("""
@@ -178,14 +179,14 @@ def delete_user(user_mention, event_name, connection=None):
         connection.close()
     
 @connect_to_database
-def count_event_users(event_name, connection=None):
+def count_event_users(event_name, server_id, connection=None):
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute("""
                 SELECT COUNT(U.id) FROM users U
                 INNER JOIN events E ON E.id = U.event_id
-                WHERE E.name ILIKE %s
-                """, (event_name,))
+                WHERE E.name ILIKE %s AND E.server_id = %s
+                """, (event_name, server_id,))
             return cursor.fetchone()[0] 
     finally:
         connection.close()
