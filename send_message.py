@@ -64,7 +64,7 @@ async def new_event(message, content):
             components = [Button(style=ButtonStyle.green, label='Inscrição', custom_id='subscribe')])
 
 async def subscribe(message, content):
-    event = database.find_event(content)
+    event = database.find_event(content, str(message.guild.id))
     if event:
         description = f"Interaja aqui para se inscrever na lista de **{content}**"
         embed_message = Embed(title="Inscrição", description=description, color=YELLOW)
@@ -76,11 +76,12 @@ async def subscribe(message, content):
         await inexistent_event(message)
 
 async def insert_user(message, name, mention, event):
-    if database.find_event(event) == None:
+    server_id = str(message.guild.id)
+    if database.find_event(event, server_id) == None:
         await inexistent_event(message)
         return
 
-    result = database.insert_user(name, mention, event)
+    result = database.insert_user(name, mention, event, server_id)
     if result == False:
         description = f"**{name}** já possui inscrição em **{event}**"
         await message.channel.send(
@@ -146,12 +147,13 @@ async def list_events(message):
     await msg.edit(embed=embed_message)
 
 async def list_users(message, content):
-    event = database.find_event(content)
+    server_id = str(message.guild.id)
+    event = database.find_event(content, server_id)
     if event == None:
         await inexistent_event(message)
         return
 
-    users = database.find_event_users(content)
+    users = database.find_event_users(content, server_id)
     description = LOADING
     embed_message = Embed(title=f"{content}", description=description, color=YELLOW)
     embed_message.add_field(name=f"Criado por: ", value=f"{event[2]}", inline=False)
@@ -175,13 +177,14 @@ async def list_users(message, content):
     await msg.edit(embed=embed_message)
 
 async def call_users(message, content):
-    event = database.find_event(content)
+    server_id = str(message.guild.id)
+    event = database.find_event(content, server_id)
     event_name = event[1]
     if event == None:
         await inexistent_event(message)
         return
 
-    users = database.find_event_users(content)
+    users = database.find_event_users(content, server_id)
     if len(users) == 0:
         description = "- Não há inscritos -"
         await message.channel.send(
@@ -215,11 +218,12 @@ async def rename_event(message, content, user_mention):
             embed = Embed(title="Aviso", description=description, color=RED), 
             delete_after = DELETE_ERROR)
         return
-    if database.find_event(event_name) == None:
+    server_id = str(message.guild.id)
+    if database.find_event(event_name, server_id) == None:
         await inexistent_event(message)
         return
 
-    result = database.rename_event(user_mention, event_name, new_event_name)
+    result = database.rename_event(user_mention, event_name, new_event_name, server_id)
     if result == False:
         description = f"Não foi possível renomear o evento. Não se esqueça" \
             " que apenas o criador do evento possui permissão para renomeá-lo."
@@ -233,7 +237,7 @@ async def rename_event(message, content, user_mention):
             delete_after = DELETE_WARN)
     
 async def remove_subscription(message, content):
-    evento = database.find_event(content)
+    evento = database.find_event(content, str(message.guild.id))
     if evento:
         description = f"Interaja aqui para retirar seu nome da lista de **{content}**"
         embed_message = Embed(title=f"Remover inscrição", description=description, color=YELLOW)
@@ -245,11 +249,12 @@ async def remove_subscription(message, content):
         await inexistent_event(message)
 
 async def remove_subscription_reponse(message, name, mention, event):
-    if database.find_event(event) == None:
+    server_id = str(message.guild.id)
+    if database.find_event(event, server_id) == None:
         await inexistent_event(message)
         return
 
-    result = database.delete_user(mention, event)
+    result = database.delete_user(mention, event, server_id)
     if result == False:
         description = f"**{name}** não possui inscrição em **{event}**"
         await message.channel.send(
@@ -266,7 +271,7 @@ async def remove_subscription_reponse(message, name, mention, event):
         await message.edit(embed=Embed.from_dict(embed_dict))
 
 async def remove_event(message, content):
-    if database.find_event(content) == None:
+    if database.find_event(content, str(message.guild.id)) == None:
         await inexistent_event(message)
         return
     
@@ -278,7 +283,7 @@ async def remove_event(message, content):
         delete_after = DELETE_WARN)
 
 async def remove_event_response(message, user, event):
-    result = database.delete_event(event, user)
+    result = database.delete_event(event, user, str(message.guild.id))
     if result == False:
         description = "Não foi possível remover o evento"
         await message.channel.send(
@@ -291,7 +296,7 @@ async def remove_event_response(message, user, event):
             delete_after = DELETE_WARN)
 
 async def select_event_list(message, title, custom_id):
-    events = database.find_all_events()
+    events = database.find_events_in_server(str(message.guild.id))
     if len(events) == 0:
         description = "- Não há eventos cadastrados -"
         embed_message = Embed(title=f"Eventos cadastrados", description=description, color=YELLOW)
