@@ -17,8 +17,11 @@ from discord_components.component import Select, SelectOption
 import database
 try:
     from config import config
+    import credentials
+    ROOT = credentials.ROOT
 except:
     config = os.environ
+    ROOT = os.environ['ROOT']
 
 async def help(message):
     embed_message = Embed(title="Comandos", color=BLUE)
@@ -93,11 +96,35 @@ async def insert_user(message, name, mention, event):
         embed_dict['fields'][0]['value'] = edited_text
         await message.edit(embed=Embed.from_dict(embed_dict))
 
+async def list_all_events(message):
+    # Comando para listar título de todos os eventos de todos os servidores
+    # Uso para fins de desenvolvimento, não é possível checar os usuários inscritos
+    # apenas os títulos dos eventos
+    if message.author.discriminator != ROOT:
+        await message.channel.send(
+            embed = Embed(title="Acesso negado", description="Seu usuário não possui permissão para uso deste comando.", color=RED),
+            delete_after = DELETE_ERROR)
+        return
+        
+    events = database.find_all_events()
+    if len(events) == 0:
+        description = "- Não há eventos cadastrados -"
+        await message.channel.send(
+            embed=Embed(title="Eventos cadastrados", description=description, color=YELLOW))
+        return
+
+    description = ""
+    for event in events:
+        description += f"- {event[1]}\n"
+
+    await message.channel.send(
+        embed=Embed(title="Eventos cadastrados", description=description, color=YELLOW))
+
 async def list_events(message):
     description = LOADING
     embed_message = Embed(title="Eventos cadastrados", value=description, color=YELLOW)
     msg = await message.channel.send(embed=embed_message)
-    events = database.find_all_events()
+    events = database.find_events_in_server(str(message.guild.id))
     if len(events) == 0:
         embed_message.description = "- Não há eventos cadastrados -"
         await msg.edit(embed=embed_message)

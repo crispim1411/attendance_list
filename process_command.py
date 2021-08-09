@@ -62,3 +62,6 @@ async def process_data(message):
         elif message.content.startswith(config['PREFIX'] + 'renomear' ):
             await send_message.rename_event(message, content, message.author.mention)
         
+        elif message.content == config['PREFIX'] + 'eventos -a':
+            await send_message.list_all_events(message)
+        
