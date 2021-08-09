@@ -31,16 +31,16 @@ def connect_to_database(func):
 
 
 @connect_to_database
-def insert_event(name, creator, connection=None):
-    event = find_event(name)
+def insert_event(name, creator, server_id, connection=None):
+    event = find_event(name, server_id)
     if event:
         return False
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute("""
-                INSERT INTO events(name, creator)
-                VALUES (%s, %s)
-                """, (name, creator,))
+                INSERT INTO events(name, creator, server_id)
+                VALUES (%s, %s, %s)
+                """, (name, creator, server_id,))
             return True
     finally:
         connection.close()
@@ -75,13 +75,25 @@ def find_all_events(connection=None):
         connection.close()
 
 @connect_to_database
-def find_event(name, connection):
+def find_events_in_server(server_id, connection=None):
+    try:
+        with connection, connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT * FROM events 
+                WHERE server_id = %s
+                ORDER BY id""", (server_id,))
+            return cursor.fetchall()
+    finally:
+        connection.close()
+
+@connect_to_database
+def find_event(name, server_id, connection):
     try:
         with connection, connection.cursor() as cursor:
             cursor.execute("""
                 SELECT * FROM events
-                WHERE name ILIKE %s
-                """, (name,))
+                WHERE name ILIKE %s AND server_id = %s
+                """, (name, server_id))
             return cursor.fetchone()
     finally:
         connection.close()

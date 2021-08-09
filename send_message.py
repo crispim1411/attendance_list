@@ -46,7 +46,7 @@ async def help(message):
     await message.channel.send(embed = embed_message)
 
 async def new_event(message, content):
-    result = database.insert_event(content, message.author.mention)
+    result = database.insert_event(content, message.author.mention, str(message.guild.id))
     if result == False:
         description = "Este evento já está cadastrado."
         await message.channel.send(
