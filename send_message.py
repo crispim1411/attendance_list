@@ -335,7 +335,7 @@ async def type_event_name(message):
 
 async def ping(message):
     pongs = ['tô aqui consagrado', 'diga campeão', 'ô amigo', 'opa', 'Êêê boi', 
-        'fala corno', 'diga gay', 'oba', 'tô aqui']
+        'fala corno', 'diga gay', 'oba', 'tô aqui', 'digai boi', 'cu']
     title = choice(pongs)
     await message.channel.send(
         embed = Embed(title='pong', description=title, color=BLUE), 
