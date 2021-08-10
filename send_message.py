@@ -9,18 +9,17 @@ GREEN   = 0x6dc22c
 # Mensagens
 LOADING = "carregando..."
 
-import os
 from random import choice
 from discord import Embed
 from discord_components import Button, ButtonStyle
 from discord_components.component import Select, SelectOption
 import database
+from config import config
 try:
-    from config import config
     import credentials
     ROOT = credentials.ROOT
 except:
-    config = os.environ
+    import os
     ROOT = os.environ['ROOT']
 
 async def help(message):

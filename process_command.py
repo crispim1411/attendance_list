@@ -2,7 +2,6 @@
 import send_message
 from config import config
 
-
 async def process_data(message):
     itens = message.content.split(' ')
     
