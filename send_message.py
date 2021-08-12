@@ -105,7 +105,8 @@ async def list_all_events(message):
             embed = Embed(title="Acesso negado", description="Seu usuário não possui permissão para uso deste comando.", color=RED),
             delete_after = DELETE_ERROR)
         return
-        
+    
+    loading_msg = await message.channel.send(LOADING)
     events = database.find_all_events()
     if len(events) == 0:
         description = "- Não há eventos cadastrados -"
@@ -119,31 +120,24 @@ async def list_all_events(message):
 
     await message.channel.send(
         embed=Embed(title="Eventos cadastrados", description=description, color=YELLOW))
+    await loading_msg.delete()
 
 async def list_events(message):
-    description = LOADING
-    embed_message = Embed(title="Eventos cadastrados", description=description, color=YELLOW)
-    msg = await message.channel.send(embed=embed_message)
     events = database.find_events_in_server(str(message.guild.id))
     if len(events) == 0:
-        embed_message.description = "- Não há eventos cadastrados -"
-        await msg.edit(embed=embed_message)
+        description = "- Não há eventos cadastrados -"
+        await message.channel.send(
+            embed = Embed(title="Eventos cadastrados", description=description, color=YELLOW))
         return
 
-    await msg.edit(embed=embed_message)
+    description = ""
+    loading_msg = await message.channel.send(LOADING)
     for event in events:
-        if description == LOADING:
-            description = f"- {event[1]}\n" + LOADING
-        else:
-            items = description.split(LOADING)
-            description = items[0] + f"- {event[1]}\n" + LOADING
+        description += f"- {event[1]}\n"
 
-        embed_message.description = description
-        await msg.edit(embed=embed_message)
-    
-    items = description.split(LOADING)
-    embed_message.description = items[0]
-    await msg.edit(embed=embed_message)
+    await message.channel.send(
+        embed=Embed(title="Eventos cadastrados", description=description, color=YELLOW))
+    await loading_msg.delete()
 
 async def list_users(message, content):
     server_id = str(message.guild.id)
@@ -153,27 +147,21 @@ async def list_users(message, content):
         return
 
     users = database.find_event_users(content, server_id)
-    description = LOADING
-    embed_message = Embed(title=f"{content}", description=description, color=YELLOW)
-    embed_message.add_field(name=f"Criado por: ", value=f"{event[2]}", inline=False)
-    msg = await message.channel.send(embed=embed_message)
     if len(users) == 0:
-        embed_message.description = "- Não há inscritos -"
-        await msg.edit(embed=embed_message)
+        description = "- Não há inscritos -"
+        await message.channel.send(
+            embed = Embed(title=f"{content}", description=description, color=YELLOW))
         return
 
+    description = ""
+    loading_msg = await message.channel.send(LOADING)
     for i, user in enumerate(users, start=1):
-        if description == LOADING:
-            description = f"{i}) {user[1]}\n"
-        else:
-            items = description.split(LOADING)
-            description = items[0] + f"{i}) {user[1]}\n" + LOADING
-        embed_message.description = description
-        await msg.edit(embed=embed_message)
+        description += f"{i}) {user[1]}\n"
     
-    items = description.split(LOADING)
-    embed_message.description = items[0]
-    await msg.edit(embed=embed_message)
+    embed_message = Embed(title="Eventos cadastrados", description=description, color=YELLOW)
+    embed_message.add_field(name=f"Criado por: ", value=f"{event[2]}", inline=False)
+    await message.channel.send(embed=embed_message)
+    await loading_msg.delete()
 
 async def call_users(message, content):
     server_id = str(message.guild.id)
@@ -241,7 +229,7 @@ async def remove_subscription(message, content):
         description = f"Interaja aqui para retirar seu nome da lista de **{content}**"
         embed_message = Embed(title=f"Remover inscrição", description=description, color=YELLOW)
         embed_message.add_field(name="Removidos", value="-", inline=False)
-        msg = await message.channel.send(
+        await message.channel.send(
             embed = embed_message,
             components = [Button(style=ButtonStyle.red, label='Sair', custom_id='exit')])
     else:
