@@ -65,5 +65,7 @@ async def on_select_option(interaction):
         await send_message.list_users(message, item)
     elif action == 'exit_select':
         await send_message.remove_subscription(message, item)
+    elif action == 'delete_select':
+        await send_message.remove_event(message, item)
 
 client.run(TOKEN)

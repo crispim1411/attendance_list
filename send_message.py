@@ -26,10 +26,10 @@ async def help(message):
     embed_message = Embed(title="Comandos", color=BLUE)
     embed_message.add_field(name="Cadastrar um novo evento", 
         value=f"```*criar <nome do evento>```", inline=False)
-    embed_message.add_field(name="Excluir um evento", 
-        value=f"```{config['PREFIX']}excluir <nome do evento>```", inline=False)
     embed_message.add_field(name="Renomear evento", 
         value=f"```{config['PREFIX']}renomear <nome> - <novo nome>```", inline=False)
+    embed_message.add_field(name="Excluir um evento", 
+        value=f"```{config['PREFIX']}excluir```", inline=False)
     embed_message.add_field(name="Listar os eventos cadastrados", 
         value=f"```{config['PREFIX']}eventos```", inline=False)
     embed_message.add_field(name="Listar os inscritos de um evento", 

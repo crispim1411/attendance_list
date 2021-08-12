@@ -26,7 +26,7 @@ async def process_data(message):
             await send_message.select_event_list(message, 'Remover inscrição', 'exit_select')
 
         elif message.content == config['PREFIX'] + 'excluir':
-            await send_message.type_event_name(message)
+            await send_message.select_event_list(message, 'Excluir evento', 'delete_select')
 
         elif message.content == config['PREFIX'] + 'renomear':
             await send_message.type_event_name(message)
