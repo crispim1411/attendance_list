@@ -327,7 +327,7 @@ async def ping(message):
     title = choice(pongs)
     await message.channel.send(
         embed = Embed(title='pong', description=title, color=BLUE), 
-        delete_after = DELETE_ERROR)
+        delete_after = DELETE_WARN)
 
 async def source_link(message):
     description = "O conhecimento serve para ser compartilhado.\n" \
