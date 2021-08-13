@@ -150,7 +150,7 @@ async def list_users(message, content):
     if len(users) == 0:
         description = "- Não há inscritos -"
         await message.channel.send(
-            embed = Embed(title=f"{content}", description=description, color=YELLOW))
+            embed = Embed(title=content, description=description, color=YELLOW))
         return
 
     description = ""
@@ -158,7 +158,7 @@ async def list_users(message, content):
     for i, user in enumerate(users, start=1):
         description += f"{i}) {user[1]}\n"
     
-    embed_message = Embed(title="Eventos cadastrados", description=description, color=YELLOW)
+    embed_message = Embed(title=content, description=description, color=YELLOW)
     embed_message.add_field(name=f"Criado por: ", value=f"{event[2]}", inline=False)
     await message.channel.send(embed=embed_message)
     await loading_msg.delete()
