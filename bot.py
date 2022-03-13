@@ -1,24 +1,20 @@
+import logging
+import process_command
+import send_message
+from config import config
+
 from discord.ext import commands
 from discord_components import DiscordComponents
 from discord_components.interaction import InteractionType
 
-# imports do projeto 
-import process_command
-import send_message
-from config import config
-try:
-    import credentials
-    TOKEN = credentials.TOKEN
-except:
-    import os
-    TOKEN = os.environ['TOKEN']
-
 client = commands.Bot(command_prefix = config['PREFIX'])
-            
+
+
 @client.event
 async def on_ready():
     DiscordComponents(client)
     print('We have logged in as {0.user}'.format(client))
+
 
 @client.event
 async def on_message(message):
@@ -27,6 +23,7 @@ async def on_message(message):
 
     if message.content.startswith(config['PREFIX']):
         await process_command.process_data(message)
+
 
 @client.event
 async def on_button_click(interaction):
@@ -48,6 +45,7 @@ async def on_button_click(interaction):
     elif action == 'delete':
         await send_message.remove_event_response(message, mention, current_event)
 
+
 @client.event
 async def on_select_option(interaction):
     item = interaction.component[0].value
@@ -68,4 +66,6 @@ async def on_select_option(interaction):
     elif action == 'delete_select':
         await send_message.remove_event(message, item)
 
-client.run(TOKEN)
+
+if __name__ == '__main__':
+    client.run(config['TOKEN'])
