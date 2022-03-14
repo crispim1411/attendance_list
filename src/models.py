@@ -8,7 +8,6 @@ class ClickMessage:
     user: Any
     mention: str
     action: str
-    content: str
     current_event: str
 
 @dataclass
