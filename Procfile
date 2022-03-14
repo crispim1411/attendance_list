@@ -1,2 +1,2 @@
 dependencies: pip install -r requirements.txt
-run: python bot.py
+run: python main.py
