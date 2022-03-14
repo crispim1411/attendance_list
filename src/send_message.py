@@ -62,7 +62,7 @@ async def insert_user(message, name, mention, event):
             delete_after = DELETE_ERROR)
     else:
         await message.edit(
-            embed=components.update_subscription_msg(message.embeds[0]))
+            embed=components.update_subscription_msg(message.embeds[0], name))
 
 
 async def list_all_events(message):
