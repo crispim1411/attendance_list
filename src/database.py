@@ -1,16 +1,11 @@
 import psycopg2
+import logging
 from urllib.parse import urlparse
-
-try:
-    import credentials
-    DATABASE_URL = credentials.DATABASE_URL
-except:
-    import os
-    DATABASE_URL = os.environ['DATABASE_URL']
+from config import Config
 
 def connect():
     try:
-        url = urlparse(DATABASE_URL)
+        url = urlparse(Config.database_url)
         connection = psycopg2.connect(
             dbname=url.path[1:],
             user=url.username,
@@ -20,7 +15,7 @@ def connect():
             )
         return connection
     except Exception as e:
-        print(f"Error while establishing database connection: {e}")
+        logging.error(f"Error while establishing database connection: {e}")
     
 def connect_to_database(func):
     def wrapper(*args, **kwargs):

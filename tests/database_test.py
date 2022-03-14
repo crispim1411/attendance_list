@@ -1,7 +1,6 @@
 import random
 import string
-# import do projeto
-import database
+import src.database as database
 
 event_name = 'event_test'
 event_name2 = 'event_test2'
@@ -14,6 +13,9 @@ user_mention3 = '<@user_mention3>'
 server_id = '123456789'
 
 #### DATABASE TESTS ####
+
+def test_connection():
+    assert database.connect()
 
 def test_find_inexistent_user():
     random_mention = '<@' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)) + '>'

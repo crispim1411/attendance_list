@@ -16,9 +16,10 @@ Inicializar bot
   
 Estrutura dos serviços
 =======================
-#. bot.py : conecta, através de um cliente, com o discord e administra as interações dos usuários com o bot;
+#. main.py : conecta, através de um cliente, com o discord e administra as interações dos usuários com o bot;
 #. process_command.py :  Irá interpretar o comando enviado pelo usuário;
 #. send_message.py : Envia a mensagem correspondente ao comando recebido;
+#. components.py: Retorna o componente de mensagem embutido;
 #. database.py : Realiza operações no banco de dados;
 #. tests.py : Testes das funções que operam no banco de dados;
-#. config.py : Algumas definições de variáveis do código.
+#. config.py : Configurações.
