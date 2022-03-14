@@ -250,6 +250,6 @@ def remove_event(event):
     return Embed.from_dict({
         "color": YELLOW,
         "title": "Excluir evento",
-        "description": f"{Config.Warn}Atenção{Config.Warn}\nAo confirmar, **{event}** será deletado.\n\n" \
+        "description": f"{Config.warn}Atenção{Config.warn}\nAo confirmar, **{event}** será deletado.\n\n" \
         "**Não se esqueça que apenas quem criou o evento possui permissão para excluí-lo.**"
     })
