@@ -30,7 +30,7 @@ help = Embed.from_dict({
     "fields": [
         {
             "name": "Cadastrar um novo evento",
-            "value": f"```*criar <nome do evento>```",
+            "value": f"```{Config.prefix}criar <nome do evento>```",
             "inline": False
         },
         {
@@ -209,10 +209,10 @@ def list_event_users(event, users, creator):
         "title": event,
         "description": users,
         "color": YELLOW,
-        "field": [
+        "fields": [
             {
-                "name": f"Criado por: ",
-                "value": f"{creator}",
+                "name": "Criado por: ",
+                "value": creator,
                 "inline": False
             }
         ]
