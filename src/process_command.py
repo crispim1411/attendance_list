@@ -1,56 +1,47 @@
 from config import Config
 from src import send_message
 
+funcs_1_param = {
+    'help': send_message.help,
+    'eventos': send_message.list_events,
+    'inscrever': send_message.select_subscribe_list,
+    'chamada': send_message.select_call_list,
+    'info': send_message.select_info_list,
+    'sair': send_message.select_exit_list,
+    'excluir': send_message.select_delete_list,
+    'renomear': send_message.type_event_name,
+    'criar': send_message.type_event_name,
+    'source': send_message.source_link,
+    'ping': send_message.ping
+}
+
+funcs_2_param = {
+    'inscrever': send_message.subscribe,
+    'chamada': send_message.call_users,
+    'info': send_message.list_users,
+    'sair': send_message.remove_subscription,
+    'excluir': send_message.remove_event,
+    'renomear': send_message.rename_event,
+    'criar': send_message.new_event
+}
+
 async def process_data(message):
     content = message.content.lstrip(Config.prefix)
     itens = content.split(' ')
     
-    if content == 'help':
-        return await send_message.help(message)
+    if content == 'eventos -a':
+        return await send_message.list_all_events(message)
 
     command = itens[0]
-
+    
     if len(itens) == 1:
-        match command:
-            case 'eventos':
-                await send_message.list_events(message)
-            case 'inscrever':
-                await send_message.select_event_list(message, 'Inscrição', 'subscribe_select')
-            case 'chamada':
-                await send_message.select_event_list(message, 'Chamada', 'call_select')
-            case 'info':
-                await send_message.select_event_list(message, 'Info', 'info_select')
-            case 'sair':
-                await send_message.select_event_list(message, 'Remover inscrição', 'exit_select')
-            case 'excluir':
-                await send_message.select_event_list(message, 'Excluir evento', 'delete_select')
-            case 'renomear':
-                await send_message.type_event_name(message)
-            case 'criar':
-                await send_message.type_event_name(message)
-            case 'source':
-                await send_message.source_link(message)
-            case 'ping':
-                await send_message.ping(message)
-        
+        func = funcs_1_param.get(command)
+        if func:
+            await func(message)    
     else:
-        match command:
-            case 'inscrever':
-                await send_message.subscribe(message, content)
-            case 'chamada':
-                send_message.call_users(message, content)
-            case 'info':
-                await send_message.list_users(message, content)
-            case 'sair':
-                 await send_message.remove_subscription(message, content)
-            case 'excluir':
-                await send_message.remove_event(message, content)
-            case 'renomear':
-                await send_message.rename_event(message, content, message.author.mention)
-            case 'criar':
-                await send_message.new_event(message, content)
-            case 'eventosall':
-                await send_message.list_all_events(message)
+        func = funcs_2_param.get(command)
+        if func:
+            await func(message, content)  
 
 
 async def process_click_button(click_msg):

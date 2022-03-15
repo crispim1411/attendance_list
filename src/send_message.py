@@ -145,7 +145,7 @@ async def call_users(message, content):
     await loading_msg.delete()
 
 
-async def rename_event(message, content, user_mention):
+async def rename_event(message, content):
     separator = '-'
     if separator not in content:
         return await message.channel.send(
@@ -166,6 +166,7 @@ async def rename_event(message, content, user_mention):
             embed = components.no_events, 
             delete_after = DELETE_ERROR)
 
+    user_mention = message.author.mention
     result = database.rename_event(user_mention, event_name, new_event_name, server_id)
     if result == False:
         await message.channel.send(
@@ -230,6 +231,21 @@ async def remove_event_response(message, user, event):
             embed = components.remove_event_success, 
             delete_after = DELETE_WARN)
 
+
+async def select_subscribe_list(message):
+    await select_event_list(message, 'Inscrição', 'subscribe_select')
+
+async def select_call_list(message):
+    await select_event_list(message, 'Chamada', 'call_select')
+
+async def select_info_list(message):
+    await select_event_list(message, 'Info', 'info_select')
+
+async def select_exit_list(message):
+    await select_event_list(message, 'Remover inscrição', 'exit_select')
+
+async def select_delete_list(message):
+    await select_event_list(message, 'Excluir evento', 'delete_select')
 
 async def select_event_list(message, title, custom_id):
     events = database.find_events_in_server(str(message.guild.id))
