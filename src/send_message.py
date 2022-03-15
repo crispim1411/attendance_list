@@ -80,8 +80,14 @@ async def list_all_events(message):
     if len(events) == 0:
         return await message.channel.send(embed=components.no_events)
 
-    description = ""
+    server = events[0][3]
+    counter = 1
+    description = f"--- Server {counter} ---\n"    
     for event in events:
+        if event[3] != server:
+            server = event[3]
+            counter += 1
+            description += f"\n--- Server {counter} ---\n"
         description += f"- {event[1]}\n"
 
     await message.channel.send(embed=components.list_events(description))

@@ -64,7 +64,7 @@ def insert_user(name, mention, event_name, server_id, connection=None):
 def find_all_events(connection=None):
     try:
         with connection, connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM events ORDER BY id")
+            cursor.execute("SELECT * FROM events ORDER BY server_id")
             return cursor.fetchall()
     finally:
         connection.close()
