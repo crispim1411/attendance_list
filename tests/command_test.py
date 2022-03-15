@@ -3,58 +3,80 @@ from src import components, process_command
 
 pytest_plugins = ('pytest_asyncio',)
 
-class Channel:
-    async def send(self, embed, delete_after=None):
+class ChannelMock:
+    async def send(self, embed, delete_after=None, components=[]):
         self.result = embed
 
 @dataclass
-class Message:
-    channel: Channel
+class MessageMock:
+    channel: ChannelMock
     content: str
     result: str
 
-
 async def test_help():
-    message = Message(channel=Channel(), content="help", result=None)
+    message = MessageMock(channel=ChannelMock(), content="help", result=None)
     await process_command.process_data(message)
     assert message.channel.result == components.help
 
-
-async def test_event_list():
-    message = Message(channel=Channel(), content="eventos", result=None)
+### 
+# Para esses testes é informado server_id 0 por isso é esperado 
+# mensagem de No events
+ 
+async def test_event_list_error():
+    message = MessageMock(channel=ChannelMock(), content="eventos", result=None)
     message.guild = lambda: None
     message.guild.id = '0'
     await process_command.process_data(message)
     assert message.channel.result == components.no_events
 
-
-async def test_select_subscribe():
-    message = Message(channel=Channel(), content="inscrever", result=None)
+async def test_select_subscribe_error():
+    message = MessageMock(channel=ChannelMock(), content="inscrever", result=None)
     message.guild = lambda: None
+    message.guild.id = '0'
     await process_command.process_data(message)
     assert message.channel.result == components.no_events
 
+async def test_select_call_error():
+    message = MessageMock(channel=ChannelMock(), content="chamada", result=None)
+    message.guild = lambda: None
+    message.guild.id = '0'
+    await process_command.process_data(message)
+    assert message.channel.result == components.no_events
 
-# funcs_1_param = {
-#     'help': send_message.help,
-#     'eventos': send_message.list_events,
-#     'inscrever': send_message.select_subscribe_list,
-#     'chamada': send_message.select_call_list,
-#     'info': send_message.select_info_list,
-#     'sair': send_message.select_exit_list,
-#     'excluir': send_message.select_delete_list,
-#     'renomear': send_message.type_event_name,
-#     'criar': send_message.type_event_name,
-#     'source': send_message.source_link,
-#     'ping': send_message.ping
-# }
+async def test_select_info_error():
+    message = MessageMock(channel=ChannelMock(), content="info", result=None)
+    message.guild = lambda: None
+    message.guild.id = '0'
+    await process_command.process_data(message)
+    assert message.channel.result == components.no_events
 
-# funcs_2_param = {
-#     'inscrever': send_message.subscribe,
-#     'chamada': send_message.call_users,
-#     'info': send_message.list_users,
-#     'sair': send_message.remove_subscription,
-#     'excluir': send_message.remove_event,
-#     'renomear': send_message.rename_event,
-#     'criar': send_message.new_event
-# }
+async def test_select_exit_error():
+    message = MessageMock(channel=ChannelMock(), content="sair", result=None)
+    message.guild = lambda: None
+    message.guild.id = '0'
+    await process_command.process_data(message)
+    assert message.channel.result == components.no_events
+
+async def test_select_delete_error():
+    message = MessageMock(channel=ChannelMock(), content="excluir", result=None)
+    message.guild = lambda: None
+    message.guild.id = '0'
+    await process_command.process_data(message)
+    assert message.channel.result == components.no_events
+
+### 
+
+async def test_rename_error():
+    message = MessageMock(channel=ChannelMock(), content="renomear", result=None)
+    await process_command.process_data(message)
+    assert message.channel.result == components.event_not_typed_error
+
+async def test_create_error():
+    message = MessageMock(channel=ChannelMock(), content="criar", result=None)
+    await process_command.process_data(message)
+    assert message.channel.result == components.event_not_typed_error
+
+async def test_source():
+    message = MessageMock(channel=ChannelMock(), content="source", result=None)
+    await process_command.process_data(message)
+    assert message.channel.result == components.source
