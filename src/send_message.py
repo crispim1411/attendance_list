@@ -16,7 +16,7 @@ async def help(message):
 
 async def type_event_name(message):
     await message.channel.send(
-        embed = components.rename_error, 
+        embed = components.event_not_typed_error, 
         delete_after = DELETE_ERROR)
 
 async def ping(message):
@@ -211,7 +211,7 @@ async def rename_event(message, content):
     result = database.rename_event(user_mention, event_name, new_event_name, server_id)
     if result == False:
         await message.channel.send(
-            embed = components.rename_error, 
+            embed = components.event_not_typed_error, 
             delete_after = DELETE_ERROR)
     else:
         await message.channel.send(
