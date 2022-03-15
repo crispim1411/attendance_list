@@ -143,16 +143,6 @@ rename_error = Embed.from_dict({
     "color": RED
 })
 
-def ping(): 
-    pongs = ['tô aqui consagrado', 'diga campeão', 'ô amigo', 'opa', 'Êêê boi', 
-        'fala corno', 'diga gay', 'oba', 'tô aqui', 'digaí boe', 'cu', 'Éééé gata',
-        'bem-te-vi']
-    return Embed.from_dict({
-        "title": "pong",
-        "description": choice(pongs),
-        "color": BLUE
-    })
-
 source = Embed.from_dict({
     "color": BLUE,
     "title": "Código do bot",
@@ -168,6 +158,16 @@ source = Embed.from_dict({
 })
 
 ##### update and return #####
+
+def ping(): 
+    pongs = ['tô aqui consagrado', 'diga campeão', 'ô amigo', 'opa', 'Êêê boi', 
+        'fala corno', 'diga gay', 'oba', 'tô aqui', 'digaí boe', 'cu', 'Éééé gata',
+        'bem-te-vi']
+    return Embed.from_dict({
+        "title": "pong",
+        "description": choice(pongs),
+        "color": BLUE
+    })
 
 def list_events(events):
     return Embed.from_dict({

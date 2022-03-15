@@ -9,61 +9,65 @@ DELETE_WARN  = 60
 # Mensagens
 LOADING = "carregando..."
 
+### one param methods ###
 
 async def help(message):
     await message.channel.send(embed=components.help)
 
+async def type_event_name(message):
+    await message.channel.send(
+        embed = components.rename_error, 
+        delete_after = DELETE_ERROR)
 
-async def new_event(message, content):
-    result = database.insert_event(content, message.author.mention, str(message.guild.id))
-    if result == False:
-        await message.channel.send(
-            embed = components.event_already_subscribed, 
-            delete_after = DELETE_ERROR)
-    else:
-        await message.channel.send(
-            embed = components.subscribe_event(content), 
-            components = [
-                Button(
-                    style=ButtonStyle.green, 
-                    label='Inscrição', 
-                    custom_id='subscribe')
-            ])
+async def ping(message):
+    await message.channel.send(
+        embed = components.ping(), 
+        delete_after = DELETE_WARN)
 
+async def source_link(message):
+    await message.channel.send(
+        embed = components.source,
+        components = [Button(style=ButtonStyle.URL, label='url', url=Config.github_link)])
 
-async def subscribe(message, content):
-    event = database.find_event(content, str(message.guild.id))
-    if event:
-        await message.channel.send(
-            embed = components.subscribe_event(content),
-            components = [
-                Button(
-                    style=ButtonStyle.green, 
-                    label='Inscrição', 
-                    custom_id='subscribe')
-            ])
-    else:
-        await message.channel.send(
-            embed = components.no_events, 
-            delete_after = DELETE_ERROR)
+async def select_subscribe_list(message):
+    await select_event_list(message, 'Inscrição', 'inscrever')
 
+async def select_call_list(message):
+    await select_event_list(message, 'Chamada', 'chamada')
 
-async def insert_user(message, name, mention, event):
-    server_id = str(message.guild.id)
-    if database.find_event(event, server_id) == None:
+async def select_info_list(message):
+    await select_event_list(message, 'Info', 'info')
+
+async def select_exit_list(message):
+    await select_event_list(message, 'Remover inscrição', 'sair')
+
+async def select_delete_list(message):
+    await select_event_list(message, 'Excluir evento', 'excluir')
+
+async def select_event_list(message, title, custom_id):
+    events = database.find_events_in_server(str(message.guild.id))
+    if len(events) == 0:
         return await message.channel.send(
             embed = components.no_events, 
-            delete_after = DELETE_ERROR)
-        
-    result = database.insert_user(name, mention, event, server_id)
-    if result == False:
-        await message.channel.send(
-            embed = components.already_subscribed(name, event), 
-            delete_after = DELETE_ERROR)
-    else:
-        await message.edit(
-            embed=components.update_subscription_msg(message.embeds[0], name))
+            delete_after = DELETE_WARN)
 
+    options = []
+    for e in events:
+        options.append(
+            SelectOption(
+                label = e[1][:24],
+                value = e[1]
+            )
+        )
+    await message.channel.send(title, delete_after = DELETE_WARN,
+        components = [
+            Select(
+                placeholder = "Selecione o evento",
+                options = options,
+                custom_id = custom_id
+            )
+        ]
+    )
 
 async def list_all_events(message):
     # Comando para listar título de todos os eventos de todos os servidores
@@ -107,6 +111,39 @@ async def list_events(message):
     await message.channel.send(embed=components.list_events(description))
     await loading_msg.delete()
 
+### two params methods ###
+
+async def new_event(message, content):
+    result = database.insert_event(content, message.author.mention, str(message.guild.id))
+    if result == False:
+        await message.channel.send(
+            embed = components.event_already_subscribed, 
+            delete_after = DELETE_ERROR)
+    else:
+        await message.channel.send(
+            embed = components.subscribe_event(content), 
+            components = [
+                Button(
+                    style=ButtonStyle.green, 
+                    label='Inscrição', 
+                    custom_id='subscribe')
+            ])
+
+async def subscribe(message, content):
+    event = database.find_event(content, str(message.guild.id))
+    if event:
+        await message.channel.send(
+            embed = components.subscribe_event(content),
+            components = [
+                Button(
+                    style=ButtonStyle.green, 
+                    label='Inscrição', 
+                    custom_id='subscribe')
+            ])
+    else:
+        await message.channel.send(
+            embed = components.no_events, 
+            delete_after = DELETE_ERROR)
 
 async def list_users(message, content):
     server_id = str(message.guild.id)
@@ -128,7 +165,6 @@ async def list_users(message, content):
     await message.channel.send(embed=components.list_event_users(content, description, event[2]))
     await loading_msg.delete()
 
-
 async def call_users(message, content):
     server_id = str(message.guild.id)
     event = database.find_event(content, server_id)
@@ -149,7 +185,6 @@ async def call_users(message, content):
         
     await message.channel.send(call_msg)
     await loading_msg.delete()
-
 
 async def rename_event(message, content):
     separator = '-'
@@ -183,7 +218,6 @@ async def rename_event(message, content):
             embed = components.rename_success, 
             delete_after = DELETE_WARN)
 
-
 async def remove_subscription(message, content):
     evento = database.find_event(content, str(message.guild.id))
     if evento:
@@ -194,25 +228,6 @@ async def remove_subscription(message, content):
         await message.channel.send(
             embed = components.no_events, 
             delete_after = DELETE_ERROR)
-
-
-async def remove_subscription_reponse(message, name, mention, event):
-    server_id = str(message.guild.id)
-    if database.find_event(event, server_id) == None:
-        return await message.channel.send(
-            embed = components.no_events, 
-            delete_after = DELETE_ERROR)
-
-    result = database.delete_user(mention, event, server_id)
-    if result == False:
-        await message.channel.send(
-            embed = components.not_subscribed(event, name),
-            delete_after = DELETE_ERROR)
-    else:
-        await message.channel.send(
-            embed=components.unsubscribed(event, name),
-            delete_after = DELETE_ERROR)
-
 
 async def remove_event(message, content):
     if database.find_event(content, str(message.guild.id)) == None:
@@ -225,9 +240,57 @@ async def remove_event(message, content):
         components = [Button(style=ButtonStyle.red, label='Excluir', custom_id='delete')],
         delete_after = DELETE_WARN)
 
+### Click methods ###
 
-async def remove_event_response(message, user, event):
-    result = database.delete_event(event, user, str(message.guild.id))
+async def subscribe_user_response(click_msg):
+    message = click_msg.message
+    user = click_msg.user
+    mention = click_msg.mention
+    event = click_msg.mention.event
+    
+    server_id = str(message.guild.id)
+    if database.find_event(event, server_id) == None:
+        return await message.channel.send(
+            embed = components.no_events, 
+            delete_after = DELETE_ERROR)
+        
+    result = database.insert_user(user, mention, event, server_id)
+    if result == False:
+        await message.channel.send(
+            embed = components.already_subscribed(user, event), 
+            delete_after = DELETE_ERROR)
+    else:
+        await message.edit(
+            embed=components.update_subscription_msg(message.embeds[0], user))
+
+async def remove_subscription_reponse(click_msg):
+    message = click_msg.message
+    user = click_msg.user
+    mention = click_msg.mention
+    event = click_msg.mention.event
+
+    server_id = str(message.guild.id)
+    if database.find_event(event, server_id) == None:
+        return await message.channel.send(
+            embed = components.no_events, 
+            delete_after = DELETE_ERROR)
+
+    result = database.delete_user(mention, event, server_id)
+    if result == False:
+        await message.channel.send(
+            embed = components.not_subscribed(event, user),
+            delete_after = DELETE_ERROR)
+    else:
+        await message.channel.send(
+            embed=components.unsubscribed(event, user),
+            delete_after = DELETE_ERROR)
+
+async def remove_event_response(click_msg):
+    message = click_msg.message
+    mention = click_msg.mention
+    event = click_msg.mention.event
+
+    result = database.delete_event(event, mention, str(message.guild.id))
     if result == False:
         await message.channel.send(
             embed = components.remove_event_error, 
@@ -236,59 +299,3 @@ async def remove_event_response(message, user, event):
         await message.channel.send(
             embed = components.remove_event_success, 
             delete_after = DELETE_WARN)
-
-
-async def select_subscribe_list(message):
-    await select_event_list(message, 'Inscrição', 'subscribe_select')
-
-async def select_call_list(message):
-    await select_event_list(message, 'Chamada', 'call_select')
-
-async def select_info_list(message):
-    await select_event_list(message, 'Info', 'info_select')
-
-async def select_exit_list(message):
-    await select_event_list(message, 'Remover inscrição', 'exit_select')
-
-async def select_delete_list(message):
-    await select_event_list(message, 'Excluir evento', 'delete_select')
-
-async def select_event_list(message, title, custom_id):
-    events = database.find_events_in_server(str(message.guild.id))
-    if len(events) == 0:
-        return await message.channel.send(
-            embed = components.no_events, 
-            delete_after = DELETE_WARN)
-
-    options = []
-    for e in events:
-        options.append(
-            SelectOption(
-                label = e[1][:24],
-                value = e[1]
-            )
-        )
-    await message.channel.send(title, delete_after = DELETE_WARN,
-        components = [
-            Select(
-                placeholder = "Selecione o evento",
-                options = options,
-                custom_id = custom_id
-            )
-        ]
-    )
-
-async def type_event_name(message):
-    await message.channel.send(
-        embed = components.rename_error, 
-        delete_after = DELETE_ERROR)
-
-async def ping(message):
-    await message.channel.send(
-        embed = components.ping(), 
-        delete_after = DELETE_WARN)
-
-async def source_link(message):
-    await message.channel.send(
-        embed = components.source,
-        components = [Button(style=ButtonStyle.URL, label='url', url=Config.github_link)])
