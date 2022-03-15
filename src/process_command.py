@@ -1,6 +1,12 @@
 from config import Config
 from src import send_message
 
+funcs_click = {
+    'subscribe': send_message.subscribe_user_response,
+    'exit': send_message.remove_subscription_reponse,
+    'delete': send_message.remove_event_response
+}
+
 funcs_1_param = {
     'help': send_message.help,
     'eventos': send_message.list_events,
@@ -44,35 +50,16 @@ async def process_data(message):
             await func(message, content)  
 
 
-async def process_click_button(click_msg):
-    message = click_msg.message
-    mention = click_msg.mention
-    current_event = click_msg.current_event
-    user = click_msg.user
-    action = click_msg.action
-
-    match action:
-        case 'subscribe':
-            await send_message.insert_user(message, user.name, mention, current_event)
-        case 'exit':
-            await send_message.remove_subscription_reponse(message, user.name, mention, current_event)
-        case 'delete':
-            await send_message.remove_event_response(message, mention, current_event)
+async def process_click_button(action, click_msg):
+    func = funcs_click.get(action)
+    if func:
+        await func(click_msg)    
 
 
-async def process_select_list(select_msg):
+async def process_select_list(action, select_msg):
     message = select_msg.message
-    item = select_msg.item
-    action = select_msg.action
+    content = select_msg.content
 
-    match action:
-        case 'subscribe_select': 
-            await send_message.subscribe(message, item)
-        case 'call_select':
-            await send_message.call_users(message, item)
-        case 'info_select':
-            await send_message.list_users(message, item)
-        case 'exit_select':
-            await send_message.remove_subscription(message, item)
-        case 'delete_select':
-            await send_message.remove_event(message, item)
+    func = funcs_2_param.get(action)
+    if func:
+        await func(message, content)  

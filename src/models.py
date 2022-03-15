@@ -7,11 +7,9 @@ class ClickMessage:
     message: Any
     user: Any
     mention: str
-    action: str
-    current_event: str
+    event: str
 
 @dataclass
 class SelectMessage:
-    item: Any
     message: Any
-    action: str
+    content: Any

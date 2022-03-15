@@ -27,31 +27,31 @@ async def on_message(message):
 
 @client.event
 async def on_button_click(interaction):
+    action = interaction.component.custom_id
     click_msg = ClickMessage(
         user = interaction.author,
         mention = f'<@!{interaction.author.id}>',
         message = interaction.message,
-        action = interaction.component.custom_id,
-        current_event = interaction.raw_data['d']['message']['embeds'][0]['description'].split('**')[1])
+        event = interaction.raw_data['d']['message']['embeds'][0]['description'].split('**')[1])
 
     try:
         await interaction.respond(type=InteractionType.UpdateMessage)
-        await process_command.process_click_button(click_msg)
+        await process_command.process_click_button(action, click_msg)
     except HTTPException as err:
         logging.error(err)
 
 
 @client.event
 async def on_select_option(interaction):
+    action = interaction.custom_id
     select_msg = SelectMessage(
-        item = interaction.component[0].value,
         message = interaction.message,
-        action = interaction.custom_id)
+        content = interaction.component[0].value)
 
     try:
         await interaction.respond(type=InteractionType.UpdateMessage)
         await interaction.message.delete()
-        await process_command.process_select_list(select_msg)
+        await process_command.process_select_list(action, select_msg)
     except HTTPException as err:
         logging.error(err)
 
