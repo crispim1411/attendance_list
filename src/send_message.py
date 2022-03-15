@@ -211,7 +211,7 @@ async def rename_event(message, content):
     result = database.rename_event(user_mention, event_name, new_event_name, server_id)
     if result == False:
         await message.channel.send(
-            embed = components.event_not_typed_error, 
+            embed = components.rename_perm_error, 
             delete_after = DELETE_ERROR)
     else:
         await message.channel.send(

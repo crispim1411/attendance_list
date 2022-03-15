@@ -106,7 +106,7 @@ event_invalid_name = Embed.from_dict({
     "color": RED
 })
 
-list_all_error = Embed.from_dict({
+rename_perm_error = Embed.from_dict({
     "title": "Aviso",
     "description": "Não foi possível renomear o evento. Não se esqueça" \
         " que apenas o criador do evento possui permissão para renomeá-lo.",
