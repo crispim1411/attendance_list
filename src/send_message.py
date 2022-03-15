@@ -97,7 +97,6 @@ async def list_all_events(message):
     await message.channel.send(embed=components.list_events(description))
     await loading_msg.delete()
 
-
 async def list_events(message):
     events = database.find_events_in_server(str(message.guild.id))
     if len(events) == 0:
@@ -112,38 +111,6 @@ async def list_events(message):
     await loading_msg.delete()
 
 ### two params methods ###
-
-async def new_event(message, content):
-    result = database.insert_event(content, message.author.mention, str(message.guild.id))
-    if result == False:
-        await message.channel.send(
-            embed = components.event_already_subscribed, 
-            delete_after = DELETE_ERROR)
-    else:
-        await message.channel.send(
-            embed = components.subscribe_event(content), 
-            components = [
-                Button(
-                    style=ButtonStyle.green, 
-                    label='Inscrição', 
-                    custom_id='subscribe')
-            ])
-
-async def subscribe(message, content):
-    event = database.find_event(content, str(message.guild.id))
-    if event:
-        await message.channel.send(
-            embed = components.subscribe_event(content),
-            components = [
-                Button(
-                    style=ButtonStyle.green, 
-                    label='Inscrição', 
-                    custom_id='subscribe')
-            ])
-    else:
-        await message.channel.send(
-            embed = components.no_events, 
-            delete_after = DELETE_ERROR)
 
 async def list_users(message, content):
     server_id = str(message.guild.id)
@@ -218,12 +185,49 @@ async def rename_event(message, content):
             embed = components.rename_success, 
             delete_after = DELETE_WARN)
 
+async def new_event(message, content):
+    result = database.insert_event(content, message.author.mention, str(message.guild.id))
+    if result == False:
+        await message.channel.send(
+            embed = components.event_already_subscribed, 
+            delete_after = DELETE_ERROR)
+    else:
+        await message.channel.send(
+            embed = components.subscribe_event(content), 
+            components = [
+                Button(
+                    style = ButtonStyle.green, 
+                    label = 'Inscrição', 
+                    custom_id = 'subscribe')
+            ])
+
+async def subscribe(message, content):
+    event = database.find_event(content, str(message.guild.id))
+    if event:
+        await message.channel.send(
+            embed = components.subscribe_event(content),
+            components = [
+                Button(
+                    style = ButtonStyle.green, 
+                    label = 'Inscrição', 
+                    custom_id = 'subscribe')
+            ])
+    else:
+        await message.channel.send(
+            embed = components.no_events, 
+            delete_after = DELETE_ERROR)
+
 async def remove_subscription(message, content):
     evento = database.find_event(content, str(message.guild.id))
     if evento:
         await message.channel.send(
             embed = components.remove_subscription(content),
-            components = [Button(style=ButtonStyle.red, label='Sair', custom_id='exit')])
+            components = [
+                Button(
+                    style = ButtonStyle.red, 
+                    label = 'Sair', 
+                    custom_id = 'exit')
+            ])
     else:
         await message.channel.send(
             embed = components.no_events, 
@@ -237,8 +241,13 @@ async def remove_event(message, content):
     
     await message.channel.send(
         embed = components.remove_event(content),
-        components = [Button(style=ButtonStyle.red, label='Excluir', custom_id='delete')],
-        delete_after = DELETE_WARN)
+        delete_after = DELETE_WARN,
+        components = [
+            Button(
+                style = ButtonStyle.red, 
+                label = 'Excluir', 
+                custom_id = 'delete')
+        ])
 
 ### Click methods ###
 
