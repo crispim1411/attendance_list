@@ -9,6 +9,7 @@ BLUE    = 0x538fdf
 GREEN   = 0x6dc22c
 
 
+### update embed ###
 def update_subscription_msg(embed, user):
     embed_dict = embed.to_dict()
     edited_text = embed_dict['fields'][0]['value']
@@ -18,8 +19,8 @@ def update_subscription_msg(embed, user):
     embed_dict['fields'][0]['value'] = edited_text
     return Embed.from_dict(embed_dict)
 
-##### static messages #####
 
+##### static messages #####
 help = Embed.from_dict({
     "color": BLUE,
     "title": "Comandos",

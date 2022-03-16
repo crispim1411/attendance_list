@@ -31,6 +31,7 @@ funcs_2_param = {
     'criar': send_message.new_event
 }
 
+
 async def process_data(message):
     content = message.content.lstrip(Config.prefix)
     itens = content.split(' ')
