@@ -268,7 +268,7 @@ async def subscribe_user_response(click_msg):
     message = click_msg.message
     user = click_msg.user
     mention = click_msg.mention
-    event = click_msg.mention.event
+    event = click_msg.event
     
     server_id = str(message.guild.id)
     if database.find_event(event, server_id) == None:
@@ -290,7 +290,7 @@ async def remove_subscription_reponse(click_msg):
     message = click_msg.message
     user = click_msg.user
     mention = click_msg.mention
-    event = click_msg.mention.event
+    event = click_msg.event
 
     server_id = str(message.guild.id)
     if database.find_event(event, server_id) == None:
@@ -312,7 +312,7 @@ async def remove_subscription_reponse(click_msg):
 async def remove_event_response(click_msg):
     message = click_msg.message
     mention = click_msg.mention
-    event = click_msg.mention.event
+    event = click_msg.event
 
     result = database.delete_event(event, mention, str(message.guild.id))
     if result == False:

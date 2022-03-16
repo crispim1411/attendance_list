@@ -40,6 +40,7 @@ async def process_data(message):
         return await send_message.list_all_events(message)
 
     command = itens[0]
+    content = content.lstrip(f"{command} ")
     
     if len(itens) == 1:
         func = funcs_1_param.get(command)

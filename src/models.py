@@ -7,9 +7,9 @@ class ClickMessage:
     message: Any
     user: Any
     mention: str
-    event: str
+    event: Any
 
 @dataclass
 class SelectMessage:
     message: Any
-    content: Any
+    content: str
