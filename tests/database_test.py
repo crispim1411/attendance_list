@@ -12,10 +12,15 @@ user_mention2 = '<@user_mention2>'
 user_mention3 = '<@user_mention3>'
 server_id = '123456789'
 
+# tables test
+database.DBTable.event = 'events_test'
+database.DBTable.user = 'users_test'
+
 #### DATABASE TESTS ####
 
 def test_connection():
-    assert database.connect()
+    with database.open_db() as cursor:
+        assert cursor != None
 
 def test_find_inexistent_user():
     random_mention = '<@' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)) + '>'
