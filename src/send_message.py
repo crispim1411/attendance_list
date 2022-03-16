@@ -37,29 +37,28 @@ async def list_all_events(message):
     # Comando para listar título de todos os eventos de todos os servidores
     # Uso para fins de desenvolvimento, não é possível checar os usuários inscritos
     # apenas os títulos dos eventos
-    if message.author.discriminator != Config.root:
+    if message.author.discriminator == Config.root:
+        loading_msg = await message.channel.send(LOADING)
+        events = database.find_all_events()
+        if len(events) == 0:
+            return await message.channel.send(embed=components.no_events)
+
+        server = events[0][3]
+        counter = 1
+        description = f"--- Server {counter} ---\n"    
+        for event in events:
+            if event[3] != server:
+                server = event[3]
+                counter += 1
+                description += f"\n--- Server {counter} ---\n"
+            description += f"- {event[1]}\n"
+
+        await message.channel.send(embed=components.list_events(description))
+        await loading_msg.delete()
+    else:
         await message.channel.send(
             embed = components.list_root,
             delete_after = DELETE_ERROR)
-        return
-    
-    loading_msg = await message.channel.send(LOADING)
-    events = database.find_all_events()
-    if len(events) == 0:
-        return await message.channel.send(embed=components.no_events)
-
-    server = events[0][3]
-    counter = 1
-    description = f"--- Server {counter} ---\n"    
-    for event in events:
-        if event[3] != server:
-            server = event[3]
-            counter += 1
-            description += f"\n--- Server {counter} ---\n"
-        description += f"- {event[1]}\n"
-
-    await message.channel.send(embed=components.list_events(description))
-    await loading_msg.delete()
 
 
 async def list_events(message):
