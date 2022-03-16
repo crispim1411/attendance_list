@@ -22,10 +22,9 @@ def open_db():
             port=url.port)
         cursor = connection.cursor()
         yield cursor
-    except psycopg2.errors.ConnectionError as err:
-        logging.error(f"Not able to connect to database: {err}")
+    except Exception as err:
+        logging.error(err)
     finally:
-        logging.error("SAVING")
         connection.commit()
         connection.close()
 
@@ -78,7 +77,7 @@ def find_all_events():
 def find_events_in_server(server_id):
     with open_db() as cursor:
         cursor.execute(f"""
-            SELECT * FROM {DBTable.user} 
+            SELECT * FROM {DBTable.event} 
             WHERE server_id = %s
             ORDER BY id""", (server_id,))
         return cursor.fetchall()
