@@ -150,12 +150,11 @@ source = Embed.from_dict({
     "description": "O conhecimento serve para ser compartilhado.\n" \
         "O código do Bot de Lista de Chamada é aberto a todos.\n" \
         "Clique no ícone de url para ser redirecionado.",
-    "footer": [
-        {
-            "text": "Beijos de tio Crispim",
-            "icon_url": Config.icon_url
-        },  
-    ]
+    "footer": 
+    {
+        "text": "Beijos de tio Crispim",
+        "icon_url": Config.icon_url
+    }
 })
 
 ##### update and return #####
