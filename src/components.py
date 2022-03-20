@@ -70,6 +70,11 @@ help = Embed.from_dict({
             "inline": False
         },
         {
+            "name": "Alterar expiração de um evento",
+            "value": f"```{Config.prefix}exp```",
+            "inline": False
+        },
+        {
             "name": "Código do bot",
             "value": f"```{Config.prefix}source```",
             "inline": False
