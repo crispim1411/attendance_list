@@ -153,6 +153,41 @@ async def rename_event(message, content):
             delete_after = DELETE_WARN)
 
 
+async def change_expiration(message, content):
+    options = []
+    for i in range(1,12+1):
+        options.append(SelectOption(label= i, value= i))
+
+    await message.channel.send(
+            embed = components.expiration, 
+            delete_after = DELETE_WARN,
+            components = [
+            Select(
+                placeholder = "Selecione",
+                options = options,
+                custom_id = f"\exp/{content}"
+            )
+        ])
+
+async def change_expiration_response(message, content, event_name):
+    new_exp = int(content)
+    server_id = str(message.guild.id)
+
+    event = database.find_event(event_name, server_id)
+    if event == None:
+        return await message.channel.send(
+            embed = components.no_events, 
+            delete_after = DELETE_ERROR)
+
+    if database.change_expiration(event[0], server_id, new_exp) == False:
+      await message.channel.send(
+            embed = components.expiration_error, 
+            delete_after = DELETE_ERROR)
+    else:
+        await message.channel.send(
+            embed = components.expiration_success, 
+            delete_after = DELETE_WARN)
+
 ### select list methods ###
 async def select_subscribe_list(message):
     await select_event_list(message, 'Inscrição', 'inscrever')
@@ -168,6 +203,9 @@ async def select_exit_list(message):
 
 async def select_delete_list(message):
     await select_event_list(message, 'Excluir evento', 'excluir')
+
+async def select_exp_list(message):
+    await select_event_list(message, 'Alterar expiração', 'exp')
 
 async def select_event_list(message, title, custom_id):
     events = database.find_events_in_server(str(message.guild.id))

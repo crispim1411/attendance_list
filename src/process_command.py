@@ -15,6 +15,7 @@ funcs_1_param = {
     'info': send_message.select_info_list,
     'sair': send_message.select_exit_list,
     'excluir': send_message.select_delete_list,
+    'exp': send_message.select_exp_list,
     'renomear': send_message.type_event_name,
     'criar': send_message.type_event_name,
     'source': send_message.source_link,
@@ -28,6 +29,7 @@ funcs_2_param = {
     'info': send_message.list_users,
     'sair': send_message.remove_subscription,
     'excluir': send_message.remove_event,
+    'exp': send_message.change_expiration,
     'renomear': send_message.rename_event,
     'criar': send_message.new_event
 }
@@ -66,3 +68,6 @@ async def process_select_list(action, select_msg):
     func = funcs_2_param.get(action)
     if func:
         await func(message, content)  
+    elif action.startswith('\exp/'):
+        event_name = action.split('\exp/')[1]
+        await send_message.change_expiration_response(message, content, event_name)

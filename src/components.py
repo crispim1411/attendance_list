@@ -157,6 +157,24 @@ source = Embed.from_dict({
     }
 })
 
+expiration = Embed.from_dict({
+    "title": "Alterar expiração",
+    "description": "Selecione uma nova expiração",
+    "color": YELLOW
+})
+
+expiration_error = Embed.from_dict({
+    "title": "Aviso",
+    "description": "Não foi possível alterar o valor da expiração do evento",
+    "color": RED
+})
+
+expiration_success = Embed.from_dict({
+    "title": "Expiração alterada",
+    "description": "Evento teve sua expiração alterada com sucesso",
+    "color": GREEN
+})
+
 ##### update and return #####
 
 def ping(): 

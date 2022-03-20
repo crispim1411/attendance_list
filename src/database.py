@@ -158,3 +158,12 @@ def count_event_users(event_name, server_id):
             WHERE E.name ILIKE %s AND E.server_id = %s
             """, (event_name, server_id,))
         return cursor.fetchone()[0] 
+
+def change_expiration(event_id, server_id, new_exp):
+    with open_db() as cursor:
+        cursor.execute(f"""
+            UPDATE {DBTable.event} 
+            SET expiration = %s
+            WHERE id = %s AND server_id = %s""",
+            (new_exp, event_id, server_id,))
+        return True
