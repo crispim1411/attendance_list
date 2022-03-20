@@ -6,7 +6,6 @@ from typing import Any
 class ClickMessage:
     message: Any
     user: Any
-    mention: str
     event: Any
 
 @dataclass

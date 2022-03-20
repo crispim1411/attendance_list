@@ -30,7 +30,6 @@ async def on_button_click(interaction):
     action = interaction.component.custom_id
     click_msg = ClickMessage(
         user = interaction.author,
-        mention = f'<@!{interaction.author.id}>',
         message = interaction.message,
         event = interaction.raw_data['d']['message']['embeds'][0]['description'].split('**')[1])
 

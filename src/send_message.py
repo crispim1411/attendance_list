@@ -2,6 +2,7 @@ from discord_components.component import Select, SelectOption
 from discord_components import Button, ButtonStyle
 from src import database, components
 from config import Config
+from src.models import ClickMessage
 
 # Tempo auto delete
 DELETE_ERROR = 30
@@ -263,10 +264,9 @@ async def remove_event(message, content):
 
 
 ### click methods ###
-async def subscribe_user_response(click_msg):
+async def subscribe_user_response(click_msg: ClickMessage):
     message = click_msg.message
     user = click_msg.user
-    mention = click_msg.mention
     event = click_msg.event
     
     server_id = str(message.guild.id)
@@ -275,20 +275,20 @@ async def subscribe_user_response(click_msg):
             embed = components.no_events, 
             delete_after = DELETE_ERROR)
         
-    result = database.insert_user(user, mention, event, server_id)
+    mention = f"<@!{user.id}>"
+    result = database.insert_user(user.name, mention, event, server_id)
     if result == False:
         await message.channel.send(
             embed = components.already_subscribed(user, event), 
             delete_after = DELETE_ERROR)
     else:
         await message.edit(
-            embed=components.update_subscription_msg(message.embeds[0], user))
+            embed=components.update_subscription_msg(message.embeds[0], user.name))
 
 
-async def remove_subscription_reponse(click_msg):
+async def remove_subscription_reponse(click_msg: ClickMessage):
     message = click_msg.message
     user = click_msg.user
-    mention = click_msg.mention
     event = click_msg.event
 
     server_id = str(message.guild.id)
@@ -297,6 +297,7 @@ async def remove_subscription_reponse(click_msg):
             embed = components.no_events, 
             delete_after = DELETE_ERROR)
 
+    mention = f"<@!{user.id}>"
     result = database.delete_user(mention, event, server_id)
     if result == False:
         await message.channel.send(
@@ -308,11 +309,12 @@ async def remove_subscription_reponse(click_msg):
             delete_after = DELETE_ERROR)
 
 
-async def remove_event_response(click_msg):
+async def remove_event_response(click_msg: ClickMessage):
     message = click_msg.message
-    mention = click_msg.mention
+    user = click_msg.user
     event = click_msg.event
 
+    mention = f"<@!{user.id}>"
     result = database.delete_event(event, mention, str(message.guild.id))
     if result == False:
         await message.channel.send(
