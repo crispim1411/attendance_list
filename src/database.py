@@ -1,3 +1,4 @@
+from datetime import datetime
 import psycopg2
 import logging
 from config import Config
@@ -75,6 +76,7 @@ def find_all_events():
 
 
 def find_events_in_server(server_id):
+    delete_expired_events(server_id)
     with open_db() as cursor:
         cursor.execute(f"""
             SELECT * FROM {DBTable.event} 
@@ -167,3 +169,25 @@ def change_expiration(event_id, server_id, new_exp):
             WHERE id = %s AND server_id = %s""",
             (new_exp, event_id, server_id,))
         return True
+
+def delete_expired_events(server_id):
+    with open_db() as cursor:
+        cursor.execute(f"""
+                SELECT * FROM {DBTable.event} 
+                WHERE server_id = %s
+                ORDER BY id""", (server_id,))
+        events = cursor.fetchall()
+    
+        now = datetime.now()
+        for event in events:
+            date_created = event[4]
+            expiration = event[5]
+            diff_month = (now.year - date_created.year)*12 + (now.month - date_created.month)
+
+            if diff_month >= expiration:
+                cursor.execute(f"""
+                    DELETE FROM {DBTable.user}
+                    WHERE event_id = %s""", (event[0],))
+                cursor.execute(f"""
+                    DELETE FROM {DBTable.event}
+                    WHERE id = %s""", (event[0],))
