@@ -21,6 +21,7 @@ funcs_1_param = {
     'ping': send_message.ping
 }
 
+# também select list
 funcs_2_param = {
     'inscrever': send_message.subscribe,
     'chamada': send_message.call_users,

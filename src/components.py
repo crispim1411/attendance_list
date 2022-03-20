@@ -204,16 +204,27 @@ def no_subscribers(event):
         "color": YELLOW
     })
 
-def list_event_users(event, users, creator):
+def list_event_users(user_list, event):
+    _, event_name, creator, _, date_created, expiration = event
     return Embed.from_dict({
-        "title": event,
-        "description": users,
+        "title": event_name,
+        "description": user_list,
         "color": YELLOW,
         "fields": [
             {
                 "name": "Criado por: ",
                 "value": creator,
                 "inline": False
+            },
+            {
+                "name": "Data: ",
+                "value": date_created.strftime('%d/%m/%Y'),
+                "inline": True
+            },
+            {
+                "name": "Expiração:",
+                "value": f"{expiration} meses" if expiration>1 else f"{expiration} mês",
+                "inline": True
             }
         ]
     })

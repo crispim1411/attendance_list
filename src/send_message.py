@@ -76,24 +76,24 @@ async def list_events(message):
 
 
 ### two params methods ###
-async def list_users(message, content):
+async def list_users(message, event_name):
     server_id = str(message.guild.id)
-    event = database.find_event(content, server_id)
+    event = database.find_event(event_name, server_id)
     if event == None:
         return await message.channel.send(
             embed = components.no_events, 
             delete_after = DELETE_ERROR)
 
-    users = database.find_event_users(content, server_id)
+    users = database.find_event_users(event_name, server_id)
     if len(users) == 0:
-        return await message.channel.send(embed=components.no_subscribers(content))
+        return await message.channel.send(embed=components.no_subscribers(event_name))
 
-    description = ""
+    user_list = ""
     loading_msg = await message.channel.send(LOADING)
     for i, user in enumerate(users, start=1):
-        description += f"{i}) {user[1]}\n"
+        user_list += f"{i}) {user[1]}\n"
     
-    await message.channel.send(embed=components.list_event_users(content, description, event[2]))
+    await message.channel.send(embed=components.list_event_users(user_list, event))
     await loading_msg.delete()
 
 
