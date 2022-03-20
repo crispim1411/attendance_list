@@ -202,7 +202,7 @@ async def new_event(message, content):
             delete_after = DELETE_ERROR)
     else:
         await message.channel.send(
-            embed = components.subscribe_event(content), 
+            embed = components.new_event(content), 
             components = [
                 Button(
                     style = ButtonStyle.green, 

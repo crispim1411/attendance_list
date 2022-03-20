@@ -176,11 +176,21 @@ def list_events(events):
         "color": YELLOW
     })
 
-def already_subscribed(user, event):
+def new_event(event):
     return Embed.from_dict({
-        "color": RED,
-        "title": "Aviso",
-        "description": f"**{user}** já possui inscrição em **{event}**"
+        "color": YELLOW,
+        "title": "Novo evento",
+        "description": f"Interaja aqui para se inscrever na lista de **{event}**",
+        "footer": {
+            "text": "Expiração padrão: 1 mês (para alterar digite *exp)"
+        },
+        "fields": [
+            {
+                "name": "Inscritos",
+                "value": "-",
+                "inline": False
+            },  
+        ]
     })
 
 def subscribe_event(event):
@@ -195,6 +205,13 @@ def subscribe_event(event):
                 "inline": False
             },  
         ]
+    })
+
+def already_subscribed(user, event):
+    return Embed.from_dict({
+        "color": RED,
+        "title": "Aviso",
+        "description": f"**{user}** já possui inscrição em **{event}**"
     })
 
 def no_subscribers(event):
@@ -218,7 +235,7 @@ def list_event_users(user_list, event):
             },
             {
                 "name": "Data: ",
-                "value": date_created.strftime('%d/%m/%Y'),
+                "value": date_created.strftime('%d/%m/%y'),
                 "inline": True
             },
             {
